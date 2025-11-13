@@ -1,25 +1,8 @@
-export default function CompleteMarkdownRenderer({ content: externalContent, onClickLink } = {}) {
-  // Sample content exercising the supported subset for V1 (used if no content prop provided)
-  const content = externalContent ?? `# Main Header
-
-This is regular text with **bold** and *italic* and ***bold italic***.
-
-## Second Level Header
-
-You can have inline code like \`const x = 5\` in your text.
+const SAMPLE_CONTENT = `# Home (Staged Writing Plan)
 
 This renderer intentionally excludes strikethrough, images, block quotes, and numbered lists in V1.
 
-### Third Level Header
-
-And you can have links like this link in your text.
-
-### Third Level Header
-#### Fourth Level Header (H4 supported)
-
 ## Code Blocks
-
-Here's a code block:
 
 \`\`\`
 function hello() {
@@ -27,224 +10,188 @@ function hello() {
 }
 \`\`\`
 
-## Lists
+- Bullet list item
+- Another item
 
-Bullet list:
-- First item
-- Second item
-- Third item
-
-Numbered lists and block quotes are not rendered specially in V1.
-
-## Mixed Content
-
-A paragraph with **bold**, *italic*, \`code\`, and a link [Go Home](home) shown as blue underlined text.
-
-Another paragraph noting exclusions.
-
-> Quote with **emphasis**
+This paragraph contains **bold**, *italic*, and \`inline code\`. Links such as [Mock Data](mock-data-template) are rendered as static text; navigation relies on the Related links list.
 `;
 
+export default function CompleteMarkdownRenderer({ content = SAMPLE_CONTENT } = {}) {
   return (
-    <div style={{
-      padding: '20px',
-      fontFamily: 'monospace',
-      fontSize: '14px',
-      lineHeight: '1.6',
-      backgroundColor: '#fff',
-      color: '#333',
-      maxWidth: '900px',
-      margin: '0 auto'
-    }}>
-      <MarkdownRenderer content={content} onClickLink={onClickLink} />
+    <div style={styles.wrapper}>
+      {renderMarkdown(content)}
     </div>
   );
 }
 
-// V1 subset: headers (#, ##, ###, ####), bold (**), inline code (`), bullet lists (- item),
-// fenced code blocks (```), and links displayed as blue underlined text.
-// If an onClickLink callback is provided, links become clickable and call onClickLink(targetId).
-function MarkdownRenderer({ content, onClickLink }) {
+function renderMarkdown(content) {
   const lines = content.split('\n');
   const elements = [];
-  let i = 0;
+  let inCodeBlock = false;
+  let codeBuffer = [];
+  let listBuffer = [];
 
-  while (i < lines.length) {
-    const line = lines[i];
-
-    // Skip empty lines
-    if (!line.trim()) {
-      elements.push(<div key={i} style={{ height: '8px' }} />);
-      i++;
-      continue;
-    }
-
-    // Headers (H1–H4)
-    if (line.startsWith('# ') && !line.startsWith('## ')) {
-      elements.push(
-        <div key={i} style={getHeaderStyle(1)}>
-          {renderInline(line.substring(2), onClickLink)}
-        </div>
-      );
-      i++;
-    } else if (line.startsWith('## ') && !line.startsWith('### ')) {
-      elements.push(
-        <div key={i} style={getHeaderStyle(2)}>
-          {renderInline(line.substring(3), onClickLink)}
-        </div>
-      );
-      i++;
-    } else if (line.startsWith('### ') && !line.startsWith('#### ')) {
-      elements.push(
-        <div key={i} style={getHeaderStyle(3)}>
-          {renderInline(line.substring(4), onClickLink)}
-        </div>
-      );
-      i++;
-    } else if (line.startsWith('#### ')) {
-      elements.push(
-        <div key={i} style={getHeaderStyle(4)}>
-          {renderInline(line.substring(5), onClickLink)}
-        </div>
-      );
-      i++;
-    }
-    // Code block
-    else if (line.startsWith('```')) {
-      const codeLines = [];
-      i++;
-      while (i < lines.length && !lines[i].startsWith('```')) {
-        codeLines.push(lines[i]);
-        i++;
-      }
-      elements.push(
-        <div key={i} style={{
-          backgroundColor: '#f5f5f5',
-          padding: '12px',
-          margin: '12px 0',
-          color: '#000',
-          whiteSpace: 'pre',
-          overflow: 'auto'
-        }}>
-          {codeLines.join('\n')}
-        </div>
-      );
-      i++;
-    }
-    // Block quotes excluded in V1 (fall through to paragraph)
-    // Bullet list
-    else if (line.startsWith('- ')) {
-      const listItems = [];
-      while (i < lines.length && lines[i].startsWith('- ')) {
-        listItems.push(lines[i].substring(2));
-        i++;
-      }
-      elements.push(
-        <div key={i} style={{ margin: '12px 0' }}>
-          {listItems.map((item, idx) => (
-            <div key={idx} style={{ paddingLeft: '20px', color: '#808080' }}>
-              - {renderInline(item, onClickLink)}
-            </div>
-          ))}
-        </div>
-      );
-    }
-    // Numbered lists excluded in V1 (fall through to paragraph)
-    // Regular paragraph
-    else {
-      elements.push(
-        <div key={i} style={{ color: '#808080', margin: '12px 0' }}>
-          {renderInline(line, onClickLink)}
-        </div>
-      );
-      i++;
-    }
-  }
-
-  return <div>{elements}</div>;
-}
-
-function getHeaderStyle(level) {
-  const colors = ['#000000', '#333333', '#666666', '#999999'];
-  return {
-    color: colors[level - 1],
-    fontWeight: 'bold',
-    margin: '16px 0 8px 0'
+  const flushList = (key) => {
+    if (!listBuffer.length) return;
+    elements.push(
+      <ul key={`list-${key}`} style={styles.list}>
+        {listBuffer.map((text, idx) => (
+          <li key={`${key}-${idx}`}>{renderInline(text)}</li>
+        ))}
+      </ul>
+    );
+    listBuffer = [];
   };
+
+  lines.forEach((line, index) => {
+    if (line.startsWith('```')) {
+      if (inCodeBlock) {
+        elements.push(
+          <pre key={`code-${index}`} style={styles.codeBlock}>
+            <code>{codeBuffer.join('\n')}</code>
+          </pre>
+        );
+        codeBuffer = [];
+      }
+      inCodeBlock = !inCodeBlock;
+      flushList(index);
+      return;
+    }
+
+    if (inCodeBlock) {
+      codeBuffer.push(line);
+      return;
+    }
+
+    if (!line.trim()) {
+      flushList(index);
+      elements.push(<div key={`spacer-${index}`} style={styles.spacer} />);
+      return;
+    }
+
+    if (line.startsWith('# ')) {
+      flushList(index);
+      elements.push(<h1 key={`h1-${index}`}>{line.slice(2)}</h1>);
+      return;
+    }
+    if (line.startsWith('## ')) {
+      flushList(index);
+      elements.push(<h2 key={`h2-${index}`}>{line.slice(3)}</h2>);
+      return;
+    }
+    if (line.startsWith('### ')) {
+      flushList(index);
+      elements.push(<h3 key={`h3-${index}`}>{line.slice(4)}</h3>);
+      return;
+    }
+    if (line.startsWith('#### ')) {
+      flushList(index);
+      elements.push(<h4 key={`h4-${index}`}>{line.slice(5)}</h4>);
+      return;
+    }
+
+    if (line.startsWith('- ')) {
+      listBuffer.push(line.slice(2));
+      return;
+    }
+
+    flushList(index);
+    elements.push(
+      <p key={`p-${index}`} style={styles.paragraph}>
+        {renderInline(line)}
+      </p>
+    );
+  });
+
+  flushList('end');
+  return elements;
 }
 
-function renderInline(text, onClickLink) {
+function renderInline(text) {
   const parts = [];
-  let lastIndex = 0;
+  let remaining = text;
+  let keyCounter = 0;
 
-  // Pattern: **bold**, *italic*, `code`, [text](target)
-  // Excludes: strikethrough, images (V1)
-  const combinedRegex = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[([^\]]+)\]\(([^\)]+)\)/g;
-  let match;
-
-  while ((match = combinedRegex.exec(text)) !== null) {
-    // Add text before match
-    if (match.index > lastIndex) {
-      parts.push(text.substring(lastIndex, match.index));
+  while (remaining.length) {
+    if (remaining.startsWith('**')) {
+      const end = remaining.indexOf('**', 2);
+      if (end !== -1) {
+        parts.push(<strong key={`b-${keyCounter++}`}>{remaining.slice(2, end)}</strong>);
+        remaining = remaining.slice(end + 2);
+        continue;
+      }
     }
 
-    // Bold
-    if (match[1]) {
-      parts.push(
-        <span key={`b-${match.index}`} style={{ fontWeight: 'bold' }}>
-          {match[1]}
-        </span>
-      );
+    if (remaining.startsWith('`')) {
+      const end = remaining.indexOf('`', 1);
+      if (end !== -1) {
+        parts.push(<code key={`c-${keyCounter++}`}>{remaining.slice(1, end)}</code>);
+        remaining = remaining.slice(end + 1);
+        continue;
+      }
     }
-    // Italic
-    else if (match[2]) {
-      parts.push(
-        <span key={`i-${match.index}`} style={{ fontStyle: 'italic' }}>
-          {match[2]}
-        </span>
-      );
-    }
-    // Inline code
-    else if (match[3]) {
-      parts.push(
-        <span key={`c-${match.index}`} style={{ color: '#c41a16' }}>
-          {match[3]}
-        </span>
-      );
-    }
-    // Link - SHOW ONLY TEXT (blue, underlined); clickable if onClickLink provided
-    else if (match[4]) {
-      const linkText = match[4];
-      const target = match[5];
-      if (typeof onClickLink === 'function') {
+
+    if (remaining.startsWith('[')) {
+      const closingBracket = remaining.indexOf(']');
+      const openParen = remaining.indexOf('(', closingBracket);
+      const closeParen = remaining.indexOf(')', openParen);
+      if (
+        closingBracket !== -1 &&
+        openParen === closingBracket + 1 &&
+        closeParen !== -1
+      ) {
         parts.push(
-          <button
-            key={`l-${match.index}`}
-            onClick={() => onClickLink(target)}
-            style={{
-              background: 'none', border: 'none', color: '#1a73e8',
-              textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit'
-            }}
-          >
-            {linkText}
-          </button>
-        );
-      } else {
-        parts.push(
-          <span key={`l-${match.index}`} style={{ color: '#1a73e8', textDecoration: 'underline' }}>
-            {linkText}
+          <span key={`link-${keyCounter++}`} style={styles.inlineLink}>
+            {remaining.slice(1, closingBracket)}
           </span>
         );
+        remaining = remaining.slice(closeParen + 1);
+        continue;
       }
     }
 
-    lastIndex = match.index + match[0].length;
+    const nextSpecial = remaining.search(/(\*\*|`|\[)/);
+    if (nextSpecial === -1) {
+      parts.push(remaining);
+      break;
+    }
+
+    if (nextSpecial > 0) {
+      parts.push(remaining.slice(0, nextSpecial));
+      remaining = remaining.slice(nextSpecial);
+    } else {
+      parts.push(remaining[0]);
+      remaining = remaining.slice(1);
+    }
   }
 
-  // Add remaining text
-  if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex));
-  }
-
-  return parts.length > 0 ? parts : text;
+  return parts;
 }
+
+const styles = {
+  wrapper: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '14px',
+    lineHeight: 1.6,
+    color: '#444',
+  },
+  codeBlock: {
+    background: '#f5f5f5',
+    borderRadius: 8,
+    padding: '12px 16px',
+    overflowX: 'auto',
+  },
+  paragraph: {
+    margin: '8px 0',
+  },
+  spacer: {
+    height: 8,
+  },
+  inlineLink: {
+    color: '#1a73e8',
+    textDecoration: 'underline',
+  },
+  list: {
+    margin: '8px 0 8px 20px',
+  },
+};

@@ -225,8 +225,8 @@ App
   - [ ] Markdown styling
 - [ ] Create components/RelatedDiagrams.jsx with:
   - [ ] Renders ul > li > button for each link
-  - [ ] onClick calls onClickLink(targetId)
-  - [ ] Shows document titles (not IDs)
+  - [ ] onClick calls onClickLink(targetId) (links array is the navigation source of truth; inline markdown links remain informational)
+  - [ ] Shows document titles (not IDs) and highlights the first link in the rightmost pane to mirror the ArrowRight shortcut
 - [ ] Update App.jsx to render PaneStrip inside ScrollContainer
 
 ---
@@ -242,11 +242,11 @@ App
 4. Wire the ADR-008 renderer (custom JSX-based markdown renderer)
 
 **What Works After Phase 4**:
-- Arrow keys work (← for back, → for forward to first link)
-- Home key works
-- Smooth scroll animation (300ms) on navigation
+- Arrow keys work (← for back, → jumps to the first related link in the rightmost pane, highlighted with a “→” hint)
+- Home key works and prevents the browser’s default scroll-to-top behavior
+- Smooth scroll animation (~300–400ms, browser-dependent) with `prefers-reduced-motion` honored
 - Visual feedback on hover (buttons, links)
-- Markdown renders with proper styling
+- Markdown renders via the ADR-008 renderer (see `docs/RenderingSpec.md`)
 - Headers in different colors/sizes
 - Code blocks in monospace
 
@@ -260,15 +260,15 @@ App
 **Checklist**:
 - [ ] Add markdown renderer (ADR-008 implementation):
   - [ ] Import the shared renderer component (CompleteMarkdownRenderer)
-  - [ ] Pass pane markdown + `onClickLink`
-  - [ ] Ensure links call navigation callbacks (no DOM innerHTML)
+  - [ ] Pass pane markdown for read-only rendering (navigation handled by Related links list)
+  - [ ] Follow the runtime spec in `docs/RenderingSpec.md`
 - [ ] Add useEffect in App.jsx for keyboard events:
   - [ ] ArrowLeft → handleBack()
   - [ ] ArrowRight → handleArrowRight() helper (jumps to first link in rightmost visible pane)
   - [ ] Home → handleHome()
 - [ ] Add smooth scroll to ScrollContainer.jsx:
-  - [ ] CSS: scroll-behavior: smooth; OR
-  - [ ] JS: container.scrollTo({left: scrollLeft, behavior: 'smooth'})
+  - [ ] Use `scrollTo({ left, behavior: 'smooth' })` with a null guard on the ref
+  - [ ] Add CSS fallback with `scroll-behavior: smooth` plus `prefers-reduced-motion` override
 - [ ] Update App.css with:
   - [ ] Smooth transitions on button hover
   - [ ] Disabled state styling for buttons
@@ -278,6 +278,7 @@ App
   - [ ] h2: color #34a853, font-size 1.5em
   - [ ] h3: color #666, font-size 1.2em
   - [ ] code: monospace, gray background
+- [ ] Show a soft warning when history length exceeds 100 entries with a “Clear history” button (keeps current pane)
   - [ ] bold/italic: proper styling
 - [ ] Test all interactions
 

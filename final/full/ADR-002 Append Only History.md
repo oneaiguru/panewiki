@@ -16,7 +16,7 @@ Question: **What happens to the history array?**
 
 Option A: Truncate history (delete positions 4+), then append new node
 - Result: history = [1, 2, 3, X]
-- Matches browser behavior (back button resets)
+- Matches **browser behavior** (browsers delete forward history)
 
 Option B: Append-only (keep all items), just move currentIndex
 - Result: history = [1, 2, 3, 4, 5, X]

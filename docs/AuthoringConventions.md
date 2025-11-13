@@ -1,4 +1,4 @@
-# Markdown Conventions (Prototype)
+# Authoring Conventions (Planning Documentation)
 
 Scope: documents under `final/summaries/` and `final/full/`.
 

@@ -107,7 +107,7 @@ if (matchIsMarkdownLink) {
 }
 ```
 
-For the markdown subset and conventions used in V1/V2, see the **Markdown Conventions** document under `/docs`.
+For the runtime renderer details (subset, regexes, styling), see `docs/RenderingSpec.md`. For authoring guidance, refer to `docs/AuthoringConventions.md`.
 
 Across all versions, markdown links of the form `[text](id)` are the primary navigation mechanism and must be parsed into interactive elements that trigger navigation to `id`.
 

@@ -72,8 +72,8 @@ Each summary already embeds `[text](TargetId)` links pointing to the compact IDs
 
 ## Rendering Contract
 
-- The renderer (see ADR-008) receives `{ id, title, content, links }` for each node.
-- Links become blue/underlined buttons that call `onClickLink(targetId)`.
-- All markdown content stays in the compact summary format, so the renderer only needs the limited subset defined in `docs/MarkdownConventions.md`.
+- The renderer (see ADR-008 + `docs/RenderingSpec.md`) receives `{ id, title, content, links }` for each node.
+- The `links` array is the source of truth for navigation/Related lists. Inline markdown links are informational text only.
+- All markdown content stays in the compact summary format defined in `docs/AuthoringConventions.md`.
 
 Use this template/process whenever new documents are added: update `final/summaries/`, rerun the generator, and commit the refreshed `docsData.js`.
