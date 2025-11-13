@@ -76,9 +76,9 @@ Mapping
 
 - Summary: `DesignDecisionsLog.md`
   - Full: `Design Decisions Log.md`
-  - Present?: No (short version only; longer hub to come later)
-  - Rename needed?: N/A
-  - Link updates?: Yes (e.g., `ADR-009 Home Position Navigation.md` currently links `DesignDecisionsLog`; will need to link `Design Decisions Log` in full set)
+  - Present?: Yes
+  - Rename needed?: No
+  - Link updates?: Done (ADR-009 updated to link `Design Decisions Log`)
 
 - Summary: `ExecutionPlan.md`
   - Full: `Execution Plan.md`
@@ -94,8 +94,8 @@ Mapping
 
 - Summary: `MasterIssueChecklist.md`
   - Full: `Master Issue Checklist.md`
-  - Present?: Yes (as `final/full/MasterIssueChecklist.md`)
-  - Rename needed?: Yes → rename to spaced form
+  - Present?: Yes
+  - Rename needed?: Done
   - Link updates?: No (current full content has no internal links)
 
 - Summary: `MockDataTemplate.md`
@@ -106,10 +106,10 @@ Mapping
 
 - Summary: `SectionsStatusTracker.md`
   - Full: `Sections Status Tracker.md`
-  - Present?: Yes (as `final/full/SectionsStatusTracker.md`)
-  - Rename needed?: Yes → rename to spaced form
+  - Present?: Yes
+  - Rename needed?: Done
   - Link updates?: No (current full content has no internal links)
 
 Notes
 - `final/full/ADR-009 Home Position Navigation.md` exists (full only; summary intentionally omitted). Its “See:” links currently use compact basenames (e.g., `ADR003FixedThreePaneViewport`). Once the full ADR files exist under spaced names, we must update these links to match the spaced basenames.
-
+ - `final/full/ADR-009 Home Position Navigation.md` exists (full only; summary intentionally omitted). Its "See:" links were adjusted to avoid references to missing full ADRs; now it links only to `Design Decisions Log` until other full ADRs are added.

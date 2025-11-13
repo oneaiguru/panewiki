@@ -180,4 +180,4 @@ Same navigation logic, different UI implementation.
 - Desktop: F5 or other shortcut alternatives
 - Analytics: track home button usage
 
-See: [ADR003FixedThreePaneViewport](ADR003FixedThreePaneViewport) See: [ADR004ComputedScrollPosition](ADR004ComputedScrollPosition) See: [ADR005ReactHooksState](ADR005ReactHooksState) See: [DesignDecisionsLog](DesignDecisionsLog)
+See: [Design Decisions Log](Design Decisions Log)
