@@ -46,6 +46,53 @@ User Query
          └──────────────────────────┘
 ```
 
+## Error Paths & Retries
+
+**A. Parallel Haiku with timeouts and partials**
+
+```
+Opus (200 tok)
+     │
+     ▼
+Dispatch N Haiku jobs ────────────────────────────────────────────┐
+     │                                                            │
+     ├─ Haiku#1 → ✅ done <30s                                    │
+     ├─ Haiku#2 → ⏳ >30s → RETRY(1, backoff 1.5×) → ✅/❌         │
+     └─ Haiku#3 → ❌ hard error → mark FAILED                     │
+                                                                 │
+Aggregate results:
+- If all ✅ → proceed to Sonnet
+- If some ❌/⏳ → show PARTIAL (e.g., 2/3 ready) + "Retry failed"
+```
+
+**B. Sonnet validation failure path**
+
+```
+Sonnet validate (500 tok)
+        │
+        ├─ PASS → ship summary/detail
+        └─ FAIL → classify:
+               • CRITICAL → block; show issues; offer "Auto-fix (re-run Haiku)"
+               • WARN     → show issues; allow user to proceed
+```
+
+**C. Retry logic (decision tree)**
+
+```
+Start
+ │
+ ├─ Haiku timeout (>30s)?
+ │     └─ Yes → Retry once (1.5× backoff) → still failing?
+ │             └─ Yes → mark FAILED; continue with partials; expose "Retry failed"
+ │
+ ├─ Partial results (k/N)?
+ │     └─ Yes → render partial UI badges + toast "k/N ready"; user can continue or retry
+ │
+ └─ Sonnet FAIL?
+       └─ Yes → If CRITICAL → block + suggest targeted Haiku re-runs
+                 If WARN → display issues + allow proceed
+```
+
 ## Viewport Semantics
 
 ```

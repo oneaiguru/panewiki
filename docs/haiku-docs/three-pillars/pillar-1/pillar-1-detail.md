@@ -1,4 +1,13 @@
+---
+id: pillar-1-detail
+title: Pillar 1 Detail - Column Output Format
+models: [haiku]
+summary: false
+readTime: 6m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Three Pillars › Pillar 1 Detail
 # Pillar 1: Column Output Format (Full Context)
 
 ## Readability Science Behind 400px
@@ -33,6 +42,26 @@ Apps like Tofu (macOS reading app) use newspaper-style columns. Result: people r
 ├─ 400px center pane (examples/code)
 ├─ 400px right pane (validation/details)
 └─ Scrollbar (48px, overlaid)
+```
+
+Apply this CSS skeleton to guarantee the columns stay readable:
+
+```css
+/* 400px columns */
+.viewport { display:flex; gap:16px; align-items:flex-start; }
+.column  { width:400px; max-width:100%; }
+
+/* Alternative: readable measure */
+.readable { max-width:65ch; }
+
+/* Responsive: 3→2→1 columns */
+@media (max-width:1024px){ .column{ flex:1 1 48%; width:auto; } }
+@media (max-width:640px) { .viewport{ flex-direction:column; } .column{ width:auto; } }
+
+/* Motion accessibility */
+@media (prefers-reduced-motion:reduce){
+  *{ scroll-behavior:auto; animation:none; transition:none; }
+}
 ```
 
 ### Why 3×400px?
@@ -224,6 +253,16 @@ This format specification applies to:
    - Whether summary or detail
    - Consistent visual language across system
 
+## References
+
+- Nielsen Norman Group — *F‑Shaped Pattern for Reading Web Content* (eyetracking evidence for scanning/shorter lines improving consumption). https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/  
+
+- Government Digital Service (GOV.UK) — *Avoid long lines of copy* (“A good rule of thumb is a maximum of 75 characters per line...”). https://designnotes.blog.gov.uk/2014/08/11/avoid-long-lines-of-copy/  
+
+- Dyson, M. C., & Haselgrove, M. (2001). *The influence of reading speed and line length on the reading of text from computer screens.* International Journal of Human‑Computer Studies, 54, 585–612. DOI: https://doi.org/10.1006/ijhc.2001.0458  :contentReference[oaicite:4]{index=4}
+
+> Note: NNG does not publish a single numeric “65-char” rule; their eyetracking research supports scannable, shorter lines. The numeric ranges are supported by GDS guidance and peer-reviewed work (Dyson & Haselgrove).
+
 ---
 
-**Next Pillar:** [Dual Representation](../pillar-2-dual-representation) | **Reference:** [400px Math Details](400px-width-math) | **Back to:** [Home](../../home)
+**Related:** [Column Output Overview](pillar-1-column-output) | [400px Math Details](400px-width-math) | [Pillar 2: Dual Representation](../pillar-2/pillar-2-dual-representation)
