@@ -46,9 +46,9 @@ Mapping
 
 - Summary: `ADR006MockPDFsNotRealRendering.md`
   - Full: `ADR-006 Mock PDFs Not Real Rendering.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes
+  - Present?: Yes
+  - Rename needed?: Done (spaced naming)
+  - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR007AppendForwardNavigation.md`
   - Full: `ADR-007 Append Forward Navigation.md`
