@@ -14,7 +14,8 @@ This renderer intentionally excludes strikethrough, images, block quotes, and nu
 
 And you can have links like this link in your text.
 
-### Third-Level Only (No H4+)
+### Third Level Header
+#### Fourth Level Header (H4 supported)
 
 ## Code Blocks
 
@@ -60,7 +61,7 @@ Another paragraph noting exclusions.
   );
 }
 
-// V1 subset: headers (#, ##, ###), bold (**), inline code (`), bullet lists (- item),
+// V1 subset: headers (#, ##, ###, ####), bold (**), inline code (`), bullet lists (- item),
 // fenced code blocks (```), and links displayed as blue underlined text
 // (not clickable in V1; navigation wiring comes in a later step).
 function MarkdownRenderer({ content }) {
@@ -78,7 +79,7 @@ function MarkdownRenderer({ content }) {
       continue;
     }
 
-    // Headers (H1–H3 only)
+    // Headers (H1–H4)
     if (line.startsWith('# ') && !line.startsWith('## ')) {
       elements.push(
         <div key={i} style={getHeaderStyle(1)}>
@@ -97,6 +98,13 @@ function MarkdownRenderer({ content }) {
       elements.push(
         <div key={i} style={getHeaderStyle(3)}>
           {renderInline(line.substring(4))}
+        </div>
+      );
+      i++;
+    } else if (line.startsWith('#### ')) {
+      elements.push(
+        <div key={i} style={getHeaderStyle(4)}>
+          {renderInline(line.substring(5))}
         </div>
       );
       i++;
@@ -157,7 +165,7 @@ function MarkdownRenderer({ content }) {
 }
 
 function getHeaderStyle(level) {
-  const colors = ['#000000', '#333333', '#666666'];
+  const colors = ['#000000', '#333333', '#666666', '#999999'];
   return {
     color: colors[level - 1],
     fontWeight: 'bold',
