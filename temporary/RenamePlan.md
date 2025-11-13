@@ -80,11 +80,11 @@ Mapping
   - Rename needed?: No
   - Link updates?: Done (ADR-009 updated to link `Design Decisions Log`)
 
-- Summary: `ExecutionPlan.md`
-  - Full: `Execution Plan.md`
+- Summary: `home.md`
+  - Full: `Home.md`
   - Present?: Yes
-  - Rename needed?: Done
-  - Link updates?: N/A
+  - Rename needed?: Done (renamed from ExecutionPlan)
+  - Link updates?: Links should reference `home`
 
 - Summary: `ImplementationRoadmap.md`
   - Full: `Implementation Roadmap.md`

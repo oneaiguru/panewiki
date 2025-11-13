@@ -22,10 +22,10 @@ Snippet from the generated file:
 
 ```javascript
 export const DOCS = {
-  "ExecutionPlan": {
-    id: "ExecutionPlan",
-    title: `Staged Writing Plan`,
-    filename: "ExecutionPlan.md",
+"home": {
+  id: "home",
+  title: `Home (Staged Writing Plan)`,
+  filename: "home.md",
     links: ["DesignDecisionsLog", "MasterIssueChecklist"],
     content: `# Staged Writing Plan\n\n...`
   },
@@ -33,12 +33,12 @@ export const DOCS = {
 };
 
 export const DOC_IDS = Object.keys(DOCS);
-export const START_DOC_ID = "ExecutionPlan"; // falls back if missing
+export const START_DOC_ID = "home"; // falls back if missing
 ```
 
 ## Document Roster (17 nodes)
 
-1. ExecutionPlan – “Staged Writing Plan” (home document per ADR-009)
+1. home – “Staged Writing Plan” (home document per ADR-009)
 2. MasterIssueChecklist
 3. SectionsStatusTracker
 4. ImplementationRoadmap
@@ -66,8 +66,8 @@ Each summary already embeds `[text](TargetId)` links pointing to the compact IDs
 
 ## Home Document Alignment
 
-- ADR-009 designates **ExecutionPlan** as the home/entry node.
-- The generator sets `START_DOC_ID = 'ExecutionPlan'` when present; otherwise it falls back to `MasterIssueChecklist`.
+- ADR-009 designates **`home`** as the entry node.
+- The generator sets `START_DOC_ID = 'home'`; if it is missing, it falls back to `MasterIssueChecklist`.
 - The viewer uses this value to seed `history`.
 
 ## Rendering Contract

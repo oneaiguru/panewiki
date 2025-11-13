@@ -4,7 +4,7 @@
 
 ## Decision
 
-ExecutionPlan (index 0) is designated as home/entry point. Home button in navbar and Home key on keyboard both jump to home. currentIndex set to 0, history preserved.
+The documentation graph includes a canonical node `home` (aliased to the staged writing plan). Home button in navbar and Home key on keyboard both jump to `home`. `currentIndex` set to 0, history preserved.
 
 ## Context
 
@@ -24,7 +24,7 @@ Users navigating through 16+ documents via links can become disoriented. What's 
 User at any position (e.g., ADR007, index 15):
   Press Home button OR Home key
                ↓
-  currentIndex = 0 (back to ExecutionPlan)
+  currentIndex = 0 (back to `home`)
   history preserved (can jump back to 15)
   Breadcrumb shows: "1 / 16"
 ```

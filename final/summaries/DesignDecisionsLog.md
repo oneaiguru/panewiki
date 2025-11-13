@@ -56,8 +56,8 @@ Status: Locked
 ← (back), → (forward), Home work globally.
 Status: Locked
 
-## Decision #15: Home Position = ExecutionPlan
-Users can jump to ExecutionPlan (home) via Home button or keyboard. History is preserved; only currentIndex resets to 0.
+## Decision #15: Home Position = `home`
+Users can jump to `home` via Home button or keyboard. History is preserved; only currentIndex resets to 0.
 Status: Locked
 
 ## Related Architecture Decisions

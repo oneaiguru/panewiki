@@ -52,7 +52,7 @@ for (const file of files) {
 }
 
 const preferredStartOrder = [
-  'ExecutionPlan',
+  'home',
   'MasterIssueChecklist',
 ];
 let startId = Object.keys(docs)[0];

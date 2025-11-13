@@ -4,7 +4,7 @@ Purpose: ensure docs remain navigable and consistent as they evolve.
 
 Checks:
 1) Link existence: every `[Text](target)` refers to a real peer file `target.md` in the same folder.
-2) Graph connectivity: from the start page (`ExecutionPlan`), all documents in the folder are reachable by following links.
+2) Graph connectivity: from the start page (`home`), all documents in the folder are reachable by following links.
 
 Folders:
 - `final/full/` — detailed reference set
@@ -55,7 +55,7 @@ def graph_for(d):
             if base in bases: g[b].add(base)
     return g
 
-def reachable(g, start='ExecutionPlan'):
+def reachable(g, start='home'):
     if start not in g: return set()
     q, seen = collections.deque([start]), {start}
     while q:
@@ -68,9 +68,8 @@ def reachable(g, start='ExecutionPlan'):
 
 Acceptance:
 - No broken links
-- All nodes reachable from `ExecutionPlan` in both folders
+- All nodes reachable from `home` in both folders
 
 When to run:
 - Locally before commit (Phase 2+)
 - CI step for future automation
-

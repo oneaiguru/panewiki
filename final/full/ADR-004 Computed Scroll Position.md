@@ -167,8 +167,11 @@ container.scrollTo({
 ```javascript
 const handleClickLink = (targetNodeId) => {
   const targetNode = DIAGRAMS_DATA[targetNodeId];
-  setHistory(prev => [...prev, targetNode]);
-  setCurrentIndex(history.length);  // Automatically triggers scroll effect
+  setHistory(prev => {
+    const next = [...prev, targetNode];
+    setCurrentIndex(next.length - 1);  // Automatically triggers scroll effect
+    return next;
+  });
 };
 
 const handleBack = () => {

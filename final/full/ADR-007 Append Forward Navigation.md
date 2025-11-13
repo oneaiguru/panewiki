@@ -124,8 +124,11 @@ This is NOT the same as truncating history. Earlier positions are still accessib
 ```javascript
 const handleClickLink = (targetNodeId) => {
   const targetNode = DIAGRAMS_DATA[targetNodeId];
-  setHistory(prev => [...prev, targetNode]);        // Always append
-  setCurrentIndex(history.length);                  // New index = new length - 1
+  setHistory(prev => {
+    const next = [...prev, targetNode];             // Always append
+    setCurrentIndex(next.length - 1);               // New index = new length - 1
+    return next;
+  });
 };
 
 // That's it. No branching logic needed.

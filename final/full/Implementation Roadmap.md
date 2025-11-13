@@ -210,7 +210,7 @@ App
 - Navigate forward, panes shift right
 - Navigate back, panes shift left
 - Visible pane count is correct (1 at start, 3 when deep)
-- Off-screen panes are not rendered (or hidden)
+- Off-screen panes remain in the DOM but are hidden via CSS (no virtualization in V1)
 - Links in pane are clickable
 
 **Checklist**:
@@ -267,7 +267,7 @@ App
   - [ ] Ensure links call navigation callbacks (no DOM innerHTML)
 - [ ] Add useEffect in App.jsx for keyboard events:
   - [ ] ArrowLeft → handleBack()
-  - [ ] ArrowRight → handleForward() (to first link)
+  - [ ] ArrowRight → handleArrowRight() helper (jumps to first link in rightmost visible pane)
   - [ ] Home → handleHome()
 - [ ] Add smooth scroll to ScrollContainer.jsx:
   - [ ] CSS: scroll-behavior: smooth; OR
@@ -324,11 +324,14 @@ export function useNavigation() {
   const [history, setHistory] = useState([DOCS[START_DOC_ID]]);
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  const handleClickLink = (targetDocId) => {
-    const targetDoc = DOCS[targetDocId];
-    setHistory(prev => [...prev, targetDoc]);
-    setCurrentIndex(history.length);
-  };
+const handleClickLink = (targetDocId) => {
+  const targetDoc = DOCS[targetDocId];
+  setHistory(prev => {
+    const next = [...prev, targetDoc];
+    setCurrentIndex(next.length - 1);
+    return next;
+  });
+};
   
   const handleBack = () => {
     if (currentIndex > 0) {
@@ -370,18 +373,18 @@ export function useNavigation() {
 Example entry in `docsData.js`:
 
 ```javascript
-"ExecutionPlan": {
-  id: "ExecutionPlan",
-  title: `Staged Writing Plan`,
-  filename: "ExecutionPlan.md",
+"home": {
+  id: "home",
+  title: `Home (Staged Writing Plan)`,
+  filename: "home.md",
   links: ["DesignDecisionsLog", "MasterIssueChecklist"],
   content: `# Staged Writing Plan\n\n...`
 }
 ```
 
 Home node alignment:
-- ADR-009 designates **ExecutionPlan** as the home/entry document.
-- The generator prefers `ExecutionPlan` as `START_DOC_ID`; if it is missing, it falls back to `MasterIssueChecklist`.
+- ADR-009 designates **`home`** as the entry document (alias for the staged writing plan).
+- The generator sets `START_DOC_ID = 'home'`; if `home.md` is missing, it falls back to `MasterIssueChecklist`.
 
 Keep the markdown set and the generated data in sync by re-running the script whenever the summaries change.
 
@@ -495,3 +498,14 @@ After all 4 phases:
 ---
 
 **Status**: Ready for Phase 1 implementation once Step 1 (page format) is approved
+Example helper:
+
+```javascript
+const handleArrowRight = () => {
+  const last = visiblePanes[visiblePanes.length - 1];
+  const firstLink = last?.links?.[0];
+  if (firstLink) {
+    handleClickLink(firstLink);
+  }
+};
+```

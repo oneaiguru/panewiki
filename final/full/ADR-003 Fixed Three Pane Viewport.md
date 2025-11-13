@@ -152,21 +152,12 @@ At currentIndex = 50: scrollLeft = 19200 (show panes 48, 49, 50)
 ### React Implementation
 ```javascript
 // Container controls scroll position
-<div 
-  ref={scrollContainerRef}
-  style={{ overflow: 'hidden' }}
-  onScroll={...} // Read-only, for debugging
->
-  <div 
-    style={{ transform: `translateX(-${scrollLeft}px)` }}
-    // OR
-    style={{ scrollLeft: scrollLeft }}
-  >
-    {/* All panes rendered here */}
-  </div>
-</div>
-
-// Scroll position updates via requestAnimationFrame or CSS scroll-behavior
+useEffect(() => {
+  scrollContainerRef.current?.scrollTo({
+    left: Math.max(0, scrollLeft),
+    behavior: 'smooth'
+  });
+}, [scrollLeft]);
 ```
 
 ### Pane Rendering

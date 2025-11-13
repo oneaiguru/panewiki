@@ -11,8 +11,8 @@ export const DOCS = {
 
 ## Decision
 
-ExecutionPlan is the home/entry point.
-Home button always returns to ExecutionPlan.
+\`home\` is the canonical entry point.
+Home button always returns to \`home\`.
 Home key (keyboard) jumps to start.
 
 ## Why
@@ -28,7 +28,7 @@ Home key (keyboard) jumps to start.
 From any position:
   Press Home button → currentIndex = 0
   Press Home key   → currentIndex = 0
-  Result: Back at ExecutionPlan
+  Result: Back at \`home\`
 \`\`\`
 
 ## Benefits
@@ -66,7 +66,6 @@ if (event.key === 'Home') {
 - [ADR005ReactHooksState](ADR005ReactHooksState)
 
 See: [DesignDecisionsLog](DesignDecisionsLog)
-
 `
   },
   "ADR001HistoryBasedNavigation": {
@@ -721,8 +720,8 @@ Status: Locked
 ← (back), → (forward), Home work globally.
 Status: Locked
 
-## Decision #15: Home Position = ExecutionPlan
-Users can jump to ExecutionPlan (home) via Home button or keyboard. History is preserved; only currentIndex resets to 0.
+## Decision #15: Home Position = \`home\`
+Users can jump to \`home\` via Home button or keyboard. History is preserved; only currentIndex resets to 0.
 Status: Locked
 
 ## Related Architecture Decisions
@@ -744,58 +743,11 @@ See: [ConstraintsAndAssumptions](ConstraintsAndAssumptions)
 - [MockDataTemplate](MockDataTemplate)
 `
   },
-  "ExecutionPlan": {
-    id: "ExecutionPlan",
-    title: `Staged Writing Plan`,
-    filename: "ExecutionPlan.md",
-    links: ["MasterIssueChecklist","DesignDecisionsLog"],
-    content: `# Staged Writing Plan
-
-## Stage 1: Foundation
-
-✓ Sections 1-2: Overview + Requirements
-→ Define all ADRs (001-008)
-→ Lock core architecture
-→ Create supporting artifacts
-
-## Stage 2: Verification
-
-→ Write Sections 3-5: Navigation, State, Scroll
-→ Write Section: Data & Content Structure
-→ Verify all sections reference ADRs
-→ Cross-check constraints
-
-## Stage 3: Specification
-
-→ Write Sections 6-7: Components, Architecture
-→ Write Section: Examples + Mock Data
-→ Write Section: Testing Strategy
-→ Add success criteria
-
-## Stage 4: Completion
-
-→ Sections 8-12: Details, Phase 2 notes
-→ Final review + consistency check
-→ Ready for implementation
-→ Lock all decisions
-
-## Acceptance Criteria
-
-Each stage complete when:
-- All sections written
-- Cross-references working
-- No contradictions with ADRs
-- Approved for next stage
-
-See: [MasterIssueChecklist](MasterIssueChecklist)
-See: [DesignDecisionsLog](DesignDecisionsLog)
-`
-  },
   "ImplementationRoadmap": {
     id: "ImplementationRoadmap",
     title: `Implementation Roadmap (V1 Prototype)`,
     filename: "ImplementationRoadmap.md",
-    links: ["ExecutionPlan"],
+    links: ["home"],
     content: `# Implementation Roadmap (V1 Prototype)
 
 ## File Structure
@@ -861,7 +813,7 @@ All 4 phases complete:
 ✓ Smooth animations
 ✓ Keyboard shortcuts functional
 
-See: [ExecutionPlan](ExecutionPlan)
+See: [home](home)
 `
   },
   "MasterIssueChecklist": {
@@ -976,7 +928,7 @@ See: [ConstraintsAndAssumptions](ConstraintsAndAssumptions)
     id: "SectionsStatusTracker",
     title: `Sections Status Tracker`,
     filename: "SectionsStatusTracker.md",
-    links: ["MasterIssueChecklist","ExecutionPlan"],
+    links: ["MasterIssueChecklist","home"],
     content: `# Sections Status Tracker
 
 ## Completed
@@ -1007,10 +959,57 @@ See: [ConstraintsAndAssumptions](ConstraintsAndAssumptions)
 Next: Write Sections 3-5
 
 See: [MasterIssueChecklist](MasterIssueChecklist)
-See: [ExecutionPlan](ExecutionPlan)
+See: [home](home)
+`
+  },
+  "home": {
+    id: "home",
+    title: `Home (Staged Writing Plan)`,
+    filename: "home.md",
+    links: ["MasterIssueChecklist","DesignDecisionsLog"],
+    content: `# Home (Staged Writing Plan)
+
+## Stage 1: Foundation
+
+✓ Sections 1-2: Overview + Requirements
+→ Define all ADRs (001-008)
+→ Lock core architecture
+→ Create supporting artifacts
+
+## Stage 2: Verification
+
+→ Write Sections 3-5: Navigation, State, Scroll
+→ Write Section: Data & Content Structure
+→ Verify all sections reference ADRs
+→ Cross-check constraints
+
+## Stage 3: Specification
+
+→ Write Sections 6-7: Components, Architecture
+→ Write Section: Examples + Mock Data
+→ Write Section: Testing Strategy
+→ Add success criteria
+
+## Stage 4: Completion
+
+→ Sections 8-12: Details, Phase 2 notes
+→ Final review + consistency check
+→ Ready for implementation
+→ Lock all decisions
+
+## Acceptance Criteria
+
+Each stage complete when:
+- All sections written
+- Cross-references working
+- No contradictions with ADRs
+- Approved for next stage
+
+See: [MasterIssueChecklist](MasterIssueChecklist)
+See: [DesignDecisionsLog](DesignDecisionsLog)
 `
   }
 };
 
 export const DOC_IDS = Object.keys(DOCS);
-export const START_DOC_ID = "ExecutionPlan";
+export const START_DOC_ID = "MasterIssueChecklist";

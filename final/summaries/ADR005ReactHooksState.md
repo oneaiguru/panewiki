@@ -31,8 +31,11 @@ All in App.jsx:
 
 ```javascript
 const handleClickLink = (id) => {
-  setHistory(prev => [...prev, DOCS[id]])
-  setCurrentIndex(history.length)
+  setHistory(prev => {
+    const next = [...prev, DOCS[id]]
+    setCurrentIndex(next.length - 1)
+    return next
+  })
 }
 
 const handleBack = () => {

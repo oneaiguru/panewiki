@@ -1,4 +1,4 @@
-# Artifact 3: Staged Writing Plan with Progress
+# Home (Staged Writing Plan with Progress)
 
 ## Stage 1: Core Logic Foundation (Critical) ⏳ NOT STARTED
 
@@ -105,3 +105,27 @@ TOTAL:    ⏳ NOT STARTED [████░░░░░░] 0%
 ---
 
 **Last Updated**: [Initial creation]
+
+---
+
+## Quick Links
+
+### Planning docs
+- [Master Issue Checklist](Master Issue Checklist)
+- [Sections Status Tracker](Sections Status Tracker)
+- [Implementation Roadmap](Implementation Roadmap)
+- [Design Decisions Log](Design Decisions Log)
+- [Constraints and Assumptions](Constraints and Assumptions)
+- [Definition Dictionary](Definition Dictionary)
+- [Mock Data Template](Mock Data Template)
+
+### ADR index
+- [ADR-001 History Based Navigation](ADR-001 History Based Navigation)
+- [ADR-002 Append Only History](ADR-002 Append Only History)
+- [ADR-003 Fixed Three Pane Viewport](ADR-003 Fixed Three Pane Viewport)
+- [ADR-004 Computed Scroll Position](ADR-004 Computed Scroll Position)
+- [ADR-005 React Hooks State](ADR-005 React Hooks State)
+- [ADR-006 Mock PDFs Not Real Rendering](ADR-006 Mock PDFs Not Real Rendering)
+- [ADR-007 Append Forward Navigation](ADR-007 Append Forward Navigation)
+- [ADR-008 Renderer Independent Navigation](ADR-008 Renderer Independent Navigation)
+- [ADR-009 Home Position Navigation](ADR-009 Home Position Navigation)

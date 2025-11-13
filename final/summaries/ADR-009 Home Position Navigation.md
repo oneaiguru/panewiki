@@ -4,8 +4,8 @@
 
 ## Decision
 
-ExecutionPlan is the home/entry point.
-Home button always returns to ExecutionPlan.
+`home` is the canonical entry point.
+Home button always returns to `home`.
 Home key (keyboard) jumps to start.
 
 ## Why
@@ -21,7 +21,7 @@ Home key (keyboard) jumps to start.
 From any position:
   Press Home button → currentIndex = 0
   Press Home key   → currentIndex = 0
-  Result: Back at ExecutionPlan
+  Result: Back at `home`
 ```
 
 ## Benefits
@@ -59,4 +59,3 @@ if (event.key === 'Home') {
 - [ADR005ReactHooksState](ADR005ReactHooksState)
 
 See: [DesignDecisionsLog](DesignDecisionsLog)
-

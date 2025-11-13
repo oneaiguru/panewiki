@@ -63,4 +63,4 @@ All 4 phases complete:
 ✓ Smooth animations
 ✓ Keyboard shortcuts functional
 
-See: [ExecutionPlan](ExecutionPlan)
+See: [home](home)

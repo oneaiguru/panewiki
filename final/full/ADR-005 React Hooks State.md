@@ -140,8 +140,11 @@ const totalHistory = history.length;
 ```javascript
 const handleClickLink = (targetNodeId) => {
   const targetNode = DIAGRAMS_DATA[targetNodeId];
-  setHistory(prev => [...prev, targetNode]);
-  setCurrentIndex(history.length);
+  setHistory(prev => {
+    const next = [...prev, targetNode];
+    setCurrentIndex(next.length - 1);
+    return next;
+  });
 };
 
 const handleBack = () => {
@@ -156,6 +159,14 @@ const handleHome = () => {
 
 const handleJumpToAncestor = (targetIndex) => {
   setCurrentIndex(targetIndex);
+};
+
+const handleArrowRight = () => {
+  const last = visiblePanes[visiblePanes.length - 1];
+  const firstLink = last?.links?.[0];
+  if (firstLink) {
+    handleClickLink(firstLink);
+  }
 };
 ```
 
@@ -173,7 +184,7 @@ useEffect(() => {
 useEffect(() => {
   const handleKeyDown = (e) => {
     if (e.key === 'ArrowLeft') handleBack();
-    else if (e.key === 'ArrowRight') handleForward();
+    else if (e.key === 'ArrowRight') handleArrowRight();
     else if (e.key === 'Home') handleHome();
   };
   window.addEventListener('keydown', handleKeyDown);

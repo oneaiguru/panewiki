@@ -38,7 +38,7 @@ Numbered lists and block quotes are not rendered specially in V1.
 
 ## Mixed Content
 
-A paragraph with **bold**, *italic*, \`code\`, and a link [Go Home](ADR-009 Home Position Navigation) shown as blue underlined text.
+A paragraph with **bold**, *italic*, \`code\`, and a link [Go Home](home) shown as blue underlined text.
 
 Another paragraph noting exclusions.
 

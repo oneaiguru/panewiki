@@ -44,7 +44,7 @@ When user navigates:
 ✅ **Linear append is fast** - Array push is O(1), no splicing or manipulation
 ✅ **Deterministic behavior** - Every navigation is just an append
 ✅ **Easier debugging** - History is always a clean linear array
-✅ **Matches browser history** - Browser history doesn't delete items, just resets position
+✅ **Deliberately deviates from browsers** - Browsers truncate forward history; we keep both old and new paths visible so nothing is lost
 
 ### Negative
 ❌ **No "branch cleanup"** - History grows even if user backtracks a lot
@@ -120,8 +120,11 @@ Could be confusing: "Where did those go?"
 // CORRECT (append-only):
 const handleClickLink = (targetNodeId) => {
   const targetNode = DIAGRAMS_DATA[targetNodeId];
-  setHistory(prev => [...prev, targetNode]);
-  setCurrentIndex(history.length);  // New length after push
+  setHistory(prev => {
+    const next = [...prev, targetNode];
+    setCurrentIndex(next.length - 1);  // New entry lives at the old length index
+    return next;
+  });
 };
 
 // WRONG (truncating):

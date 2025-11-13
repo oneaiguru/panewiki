@@ -105,7 +105,7 @@ Implementation:
 
 ### Pane Component Structure
 ```javascript
-function Pane({ node }) {
+function Pane({ node, onClickLink }) {
   return (
     <div className="pane">
       <div className="pane-header">
@@ -209,7 +209,7 @@ npm install pdfjs-dist
 ```javascript
 import * as PDFJS from 'pdfjs-dist';
 
-function Pane({ node }) {
+function Pane({ node, onClickLink }) {
   const [pdfPage, setPdfPage] = useState(null);
   
   useEffect(() => {
@@ -336,12 +336,11 @@ If placeholder boxes seem too minimal:
 - Memory: Minimal (no PDF parser)
 
 ### Placeholder vs Real PDFs
-| Metric | Placeholder | Real PDF |
-|--------|-------------|----------|
-| Load time | <100ms | 500ms-2s (per PDF) |
-| Memory | 1KB per pane | 50-500KB per PDF |
-| Complexity | Trivial | Complex |
-| Files needed | 0 | 20+ PDF files |
+**Placeholder vs Real PDFs**
+- Load time: `<100ms` vs `500ms–2s` per PDF
+- Memory: ~1KB per pane vs 50–500KB per PDF
+- Complexity: trivial JSX vs full PDF pipeline
+- Artifacts needed: none vs 20+ PDF files to test
 
 ---
 
