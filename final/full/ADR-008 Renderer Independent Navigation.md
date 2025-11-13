@@ -1,4 +1,4 @@
-# ADR-008: Pure Stateless Renderer (Renderer-Independent Navigation)
+# ADR-008: Renderer-Independent Navigation
 
 **Status**: Accepted  
 **Date**: 2025-11-13
@@ -66,6 +66,19 @@ function render(inputs: NavInputs): ViewOutput;
 
 Link handling is the renderer’s responsibility: links in content must become interactive elements that call `onClickLink(targetId)`.
 
+Pseudocode (renderer contract):
+
+```
+Inputs:
+  - node          // document data (id, title, content, links)
+  - onClickLink   // callback(targetId)
+Output:
+  - view          // JSX (web), string/ANSI (terminal), PDF page, or editor component
+Behavior:
+  - Render content
+  - Turn [text](target) links into interactive controls that call onClickLink(target)
+```
+
 ---
 
 ## Link Semantics (React Example)
@@ -95,6 +108,8 @@ if (matchIsMarkdownLink) {
 ```
 
 For the markdown subset and conventions used in V1/V2, see: [Markdown Conventions](../../docs/MarkdownConventions.md)
+
+Across all versions, markdown links of the form `[text](id)` are the primary navigation mechanism and must be parsed into interactive elements that trigger navigation to `id`.
 
 ---
 
@@ -156,10 +171,14 @@ V1 (React, read‑only)
 - Navigation hook exposes `history`, `currentIndex`, and handlers.
 - Renderer converts markdown to JSX; links call `onClickLink`.
 - 3‑pane viewport and scroll math from ADR‑003/ADR‑004.
+ 
+Note: V1 is a read‑only prototype used for UX research with hardcoded data.
 
 V2 (Terminal/TUI)
 - Same navigation; renderer outputs ANSI strings.
 - Opens external editor for `.md` when editing (outside this ADR).
+ 
+Note: V2 is the first “real product” using filesystem markdown with external editing.
 
 V3 (PDF Viewer)
 - Same navigation; renderer loads PDF pages.

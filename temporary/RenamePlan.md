@@ -57,9 +57,9 @@ Mapping
   - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR008PureStatelessRenderer.md`
-  - Full: `ADR-008 Pure Stateless Renderer.md`
+  - Full: `ADR-008 Renderer Independent Navigation.md`
   - Present?: Yes
-  - Rename needed?: Done (created from conversation log)
+  - Rename needed?: Done (renamed to preferred title)
   - Link updates?: N/A (links point to existing full documents)
 
 - Summary: `ConstraintsAndAssumptions.md`
