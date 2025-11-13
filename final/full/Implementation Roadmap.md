@@ -5,17 +5,14 @@
 ```
 src/
 ├── App.jsx                    (Main app component, state management)
-├── App.css                    (Global styles)
+├── App.css                    (Global styles for nav, panes, markdown)
 ├── data/
 │   └── docsData.js          (auto-generated from final/summaries via scripts/generateDocsData.js)
 ├── components/
 │   ├── NavigationBar.jsx      (Top navigation bar)
-│   ├── NavigationBar.css
 │   ├── ScrollContainer.jsx    (Viewport + scroll logic)
-│   ├── ScrollContainer.css
 │   ├── PaneStrip.jsx          (Flex container for panes)
 │   ├── Pane.jsx               (Individual pane component)
-│   ├── Pane.css
 │   └── RelatedDiagrams.jsx    (List of links in pane)
 ├── hooks/
 │   └── useNavigation.js       (Custom hook for navigation logic)

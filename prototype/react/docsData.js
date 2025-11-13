@@ -329,8 +329,11 @@ All in App.jsx:
 
 \`\`\`javascript
 const handleClickLink = (id) => {
-  setHistory(prev => [...prev, DOCS[id]])
-  setCurrentIndex(history.length)
+  setHistory(prev => {
+    const next = [...prev, DOCS[id]]
+    setCurrentIndex(next.length - 1)
+    return next
+  })
 }
 
 const handleBack = () => {
@@ -966,7 +969,7 @@ See: [home](home)
     id: "home",
     title: `Home (Staged Writing Plan)`,
     filename: "home.md",
-    links: ["MasterIssueChecklist","DesignDecisionsLog"],
+    links: ["MasterIssueChecklist","DesignDecisionsLog","SectionsStatusTracker","ImplementationRoadmap","ConstraintsAndAssumptions","DefinitionDictionary","MockDataTemplate","ADR001HistoryBasedNavigation","ADR002AppendOnlyHistory","ADR003FixedThreePaneViewport","ADR004ComputedScrollPosition","ADR005ReactHooksState","ADR006MockPDFsNotRealRendering","ADR007AppendForwardNavigation","ADR008PureStatelessRenderer","ADR-009 Home Position Navigation"],
     content: `# Home (Staged Writing Plan)
 
 ## Stage 1: Foundation
@@ -1007,9 +1010,31 @@ Each stage complete when:
 
 See: [MasterIssueChecklist](MasterIssueChecklist)
 See: [DesignDecisionsLog](DesignDecisionsLog)
+
+## Quick Links
+
+### Planning docs
+- [MasterIssueChecklist](MasterIssueChecklist)
+- [SectionsStatusTracker](SectionsStatusTracker)
+- [ImplementationRoadmap](ImplementationRoadmap)
+- [DesignDecisionsLog](DesignDecisionsLog)
+- [ConstraintsAndAssumptions](ConstraintsAndAssumptions)
+- [DefinitionDictionary](DefinitionDictionary)
+- [MockDataTemplate](MockDataTemplate)
+
+### ADR index
+- [ADR001HistoryBasedNavigation](ADR001HistoryBasedNavigation)
+- [ADR002AppendOnlyHistory](ADR002AppendOnlyHistory)
+- [ADR003FixedThreePaneViewport](ADR003FixedThreePaneViewport)
+- [ADR004ComputedScrollPosition](ADR004ComputedScrollPosition)
+- [ADR005ReactHooksState](ADR005ReactHooksState)
+- [ADR006MockPDFsNotRealRendering](ADR006MockPDFsNotRealRendering)
+- [ADR007AppendForwardNavigation](ADR007AppendForwardNavigation)
+- [ADR008PureStatelessRenderer](ADR008PureStatelessRenderer)
+- [ADR-009 Home Position Navigation](ADR-009 Home Position Navigation)
 `
   }
 };
 
 export const DOC_IDS = Object.keys(DOCS);
-export const START_DOC_ID = "MasterIssueChecklist";
+export const START_DOC_ID = "home";
