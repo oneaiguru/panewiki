@@ -1,267 +1,133 @@
+---
+id: system-reference
+title: "System Visualization & Reference"
+models: [opus]
+summary: false
+readTime: 10m
+---
+
 <!-- model: opus -->
+> **Path:** Home › System Reference
+> **Validation:** Reviewed by Sonnet ✓
+
 # System Visualization & Reference
 
-## The Complete 3-Column Paradigm
+## Visual Overview
 
 ```
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        USER INTERFACE (1200px)                             │
-├────────────┬─────────────────┬──────────────────────────────────────────────┤
-│            │                 │                                              │
-│  400px     │    400px        │            400px                             │
-│ CONTEXT    │   SUMMARY       │           DETAIL                             │
-│            │                 │                                              │
-│ ┌────────┐ │  ┌───────────┐  │  ┌──────────────────────┐                   │
-│ │ Opus   │ │  │ Haiku     │  │  │ Sonnet               │                   │
-│ │        │ │  │ (or Human)│  │  │                      │                   │
-│ │Strategy│ │  │           │  │  │ Validation +         │                   │
-│ │        │ │  │ Examples  │  │  │ Synthesis            │                   │
-│ │• What  │ │  │ • Code    │  │  │ ✓ ✓ ⚠ ✗             │                   │
-│ │• Why   │ │  │ • Diagrams│  │  │ • Gaps               │                   │
-│ │• How   │ │  │ • Output  │  │  │ • Suggestions        │                   │
-│ │        │ │  │           │  │  │ • Next steps         │                   │
-│ │Click→  │ │  │ [Expand]  │  │  │ [Navigate]           │                   │
-│ │[More]  │ │  │           │  │  │                      │                   │
-│ └────────┘ │  └───────────┘  │  └──────────────────────┘                   │
-│            │                 │                                              │
-│ Model:     │  Model:         │  Model:                                      │
-│ Opus 4     │  Haiku 4.5      │  Sonnet 4.5                                  │
-│ $15/M      │  $0.80/M        │  $3/M                                        │
-│            │                 │                                              │
-└────────────┴─────────────────┴──────────────────────────────────────────────┘
-              └───────────────────┬──────────────────────────┘
-                                  │
-                          RESPONSIVE LAYOUT:
-                          Tablet: 2 panes (C + R)
-                          Mobile: 1 pane (C) with nav
+┌────────┬────────┬────────┐
+│ 400px  │ 400px  │ 400px  │
+│ Opus   │ Haiku  │ Sonnet │
+│ Why    │ What   │ Verify │
+└────────┴────────┴────────┘
 ```
+_Alt: Three equal columns showing Opus (strategy), Haiku (execution), and Sonnet (validation) panes._
 
-## Data Flow: The Orchestration
+Rates follow [Pricing](appendix/pricing): Opus handles premium planning input, Haiku produces low-cost output, and Sonnet performs mid-tier validation. Every pane surfaces the model attribution plus the validation badge so readers know who authored and who reviewed the section.
+
+### Interaction Legend
+
+- `✓` — Pass: requirement satisfied
+- `⚠` — Warning: needs follow-up
+- `✗` — Fail: blocking issue
+- `[Expand]` — Reveal detail layer (100+ lines)
+- `[Navigate]` — Jump to linked document
+
+## Data-Flow Orchestration
 
 ```
-USER QUERY
-  "Design authentication system"
-         │
-         ▼
-    ┌─────────────────────────────┐
-    │ OPUS (Expensive, Thinking)  │
-    │                             │
-    │ Output (200 tokens):        │
-    │ ┌─────────────────────────┐ │
-    │ │ Core components:        │ │
-    │ │ • User model            │ │
-    │ │ • JWT middleware        │ │
-    │ │ • Rate limiting         │ │
-    │ │                         │ │
-    │ │ Haiku should create:    │ │
-    │ │ 1. Schema example       │ │
-    │ │ 2. Middleware code      │ │
-    │ │ 3. Rate limit handler   │ │
-    │ └─────────────────────────┘ │
-    └────────┬────────────────────┘
-             │
-    ┌────────┼────────┐
-    │        │        │
-    ▼        ▼        ▼
-  ┌────┐  ┌────┐  ┌────┐    Parallel execution
-  │HAI1│  │HAI2│  │HAI3│    (all at once)
-  └──┬─┘  └──┬─┘  └──┬─┘
-     │       │       │
-     │ Results: 3 code examples + explanations
-     │
-     └───────────┬─────────────
-                 │
-                 ▼
-         ┌──────────────────────┐
-         │ SONNET (Moderate)    │
-         │ (Review & Validate)  │
-         │                      │
-         │ Input: Opus + Haiku  │
-         │ Output (500 tokens): │
-         │                      │
-         │ ✓ Schema correct     │
-         │ ✓ Middleware secure  │
-         │ ⚠ Rate limit timing  │
-         │ ✗ Missing logout     │
-         │                      │
-         │ Suggestions:         │
-         │ • Add grace period   │
-         │ • Implement revocation
-         │ • Add audit logs     │
-         └──────────────────────┘
-                 │
-                 ▼
-    ┌──────────────────────────────┐
-    │ RENDER TO 3 PANES            │
-    │                              │
-    │ Left:  Opus (strategy)       │
-    │ Center: Haiku (examples)     │
-    │ Right: Sonnet (validation)   │
-    │                              │
-    │ User sees complete picture   │
-    │ in <2 minutes                │
-    └──────────────────────────────┘
-
-COST BREAKDOWN:
-  Opus:   200 tokens × $15/M = $0.003  (Strategic layer)
-  Haiku:  3000 tokens × $0.8/M = $0.0024 (Parallel execution)
-  Sonnet: 500 tokens × $3/M = $0.0015 (Review layer)
-  ────────────────────────────
-  TOTAL: ~$0.007 (vs $0.06 for all-Opus = 91% savings)
+┌──────────┐
+│ User ask │
+└────┬─────┘
+     │ prompt
+┌────▼────┐
+│  Opus   │ Essence (≈200 in)
+└────┬────┘
+     │ plans
+┌────▼────┐
+│ Haiku 1 │ Examples
+├─────────┤
+│ Haiku 2 │ Parallel
+├─────────┤
+│ Haiku 3 │ Output (≈3K out)
+└────┬────┘
+     │ bundles results
+┌────▼────┐
+│ Sonnet  │ Review (≈500 out)
+└────┬────┘
+     │ synthesis
+┌────▼────┐
+│  User   │ Reads columns
+└─────────┘
 ```
+_Alt: Linear flow from user prompt to Opus planning, parallel Haiku runs, Sonnet validation, then user consumption._
 
-## Three Pillars Architecture
+**Token profile (scenario from [Pricing](appendix/pricing))**
+- Opus: ~200 input tokens → ≈$0.003
+- Haiku: three 1K output batches → ≈$0.045 total at $5/M out
+- Sonnet: 500 output tokens → ≈$0.0075 at $15/M out
+- **Total ≈$0.055**, ≈81% cheaper than all-Opus output ($0.30)
+
+## Document Stack
+
+- **INDEX** — Navigation hub for all personas
+- **HOME / home-detail** — Gateway pair explaining summary vs. detail
+- **Vision set** — [vision](vision/vision), [problem-statement](vision/problem-statement), [solution-overview](vision/solution-overview)
+- **Three Pillars**
+  - Pillar 1: [pillar-1-column-output](three-pillars/pillar-1/pillar-1-column-output), [pillar-1-detail](three-pillars/pillar-1/pillar-1-detail), _pending:_ 400px-width-math (tracked in [MISSING_FILES](MISSING_FILES))
+  - Pillar 2: [pillar-2-dual-representation](three-pillars/pillar-2/pillar-2-dual-representation), [pillar-2-detail](three-pillars/pillar-2/pillar-2-detail), [human-layer](three-pillars/pillar-2/human-layer), [ai-layer](three-pillars/pillar-2/ai-layer), [navigation-between-layers](three-pillars/pillar-2/navigation-between-layers)
+  - Pillar 3: [pillar-3-model-orchestration](three-pillars/pillar-3/pillar-3-model-orchestration), [pillar-3-detail](three-pillars/pillar-3/pillar-3-detail), [opus-role-essence](three-pillars/pillar-3/opus-role-essence), [haiku-role-illustration](three-pillars/pillar-3/haiku-role-illustration), [sonnet-role-review](three-pillars/pillar-3/sonnet-role-review)
+- **Architecture** — [information-flow](architecture/information-flow), [viewport-semantics](architecture/viewport-semantics), [data-model](architecture/data-model), [token-economics](architecture/token-economics)
+- **Implementation** — [extending-current-system](implementation/extending-current-system), [markdown-conventions](implementation/markdown-conventions), [model-metadata](implementation/model-metadata), [prompt-patterns](implementation/prompt-patterns), future-vision set: [cursor-integration](implementation/future-vision/cursor-integration), [claude-code-integration](implementation/future-vision/claude-code-integration), [chatgpt-plugin](implementation/future-vision/chatgpt-plugin)
+- **Use cases** — [code-review](use-cases/code-review), [research](use-cases/research), [debugging](use-cases/debugging), [learning](use-cases/learning)
+
+## Navigation Pattern
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                    3-COLUMN PARADIGM                         │
-├──────────────────────────────────────────────────────────────┤
-│                                                              │
-│  ┌─────────────────┐    ┌─────────────────┐                │
-│  │  PILLAR 1       │    │  PILLAR 2       │                │
-│  │  COLUMNS        │    │  DUAL           │                │
-│  │  ────────       │    │  REPRESENTATION │                │
-│  │                 │    │  ───────────    │                │
-│  │ • 400px width   │    │                 │                │
-│  │ • Newspaper fmt │    │ • Summary layer │                │
-│  │ • Readable      │    │ • Detail layer  │                │
-│  │ • Constrained   │    │ • Human-first   │                │
-│  │ • Forced clarity│    │ • AI-complete   │                │
-│  │                 │    │ • Navigation    │                │
-│  └─────────────────┘    └─────────────────┘                │
-│           ▲                      ▲                           │
-│           │                      │                           │
-│           └──────────┬───────────┘                           │
-│                      │                                       │
-│                      ▼                                       │
-│           ┌──────────────────────┐                          │
-│           │  PILLAR 3            │                          │
-│           │  ORCHESTRATION       │                          │
-│           │  ──────────────      │                          │
-│           │                      │                          │
-│           │ • Opus thinking      │                          │
-│           │ • Haiku execution    │                          │
-│           │ • Sonnet validation  │                          │
-│           │ • Model roles        │                          │
-│           │ • Token efficiency   │                          │
-│           │ • Parallel workflow  │                          │
-│           └──────────────────────┘                          │
-│                                                              │
-└──────────────────────────────────────────────────────────────┘
-
-RESULT: A system that is
-  ✓ Readable (columns work)
-  ✓ Learnable (summary first)
-  ✓ Efficient (orchestrated models)
-  ✓ Scalable (parallel execution)
-  ✓ Transparent (model attribution)
-  ✓ Economical (87% cost reduction)
+Home summary
+   ↓ decide relevance
+Home detail
+   ↓ pick pillar
+Pillar summary
+   ↓ expand detail
+Pillar detail
+   ↓ jump via breadcrumb
+Next doc
 ```
-
-## Document Structure
-
-```
-haiku-docs/
-├── INDEX.md (you are here)
-│
-├── home.md + home-detail.md
-│   └── Gateway to everything
-│
-├── vision/
-│   ├── vision.md (Why columns matter)
-│   ├── problem-statement.md
-│   └── solution-overview.md
-│
-├── three-pillars/
-│   ├── pillar-1/ (Column format)
-│   │   ├── pillar-1-column-output.md
-│   │   ├── pillar-1-detail.md
-│   │   └── 400px-width-math.md
-│   │
-│   ├── pillar-2/ (Dual representation)
-│   │   ├── pillar-2-dual-representation.md
-│   │   ├── pillar-2-detail.md
-│   │   ├── human-layer.md
-│   │   ├── ai-layer.md
-│   │   └── navigation-between-layers.md
-│   │
-│   └── pillar-3/ (Model orchestration)
-│       ├── pillar-3-model-orchestration.md
-│       ├── pillar-3-detail.md
-│       ├── opus-role-essence.md
-│       ├── haiku-role-illustration.md
-│       ├── sonnet-role-review.md
-│       └── token-economics.md
-│
-├── architecture/
-│   ├── information-flow.md
-│   ├── viewport-semantics.md
-│   ├── data-model.md
-│   └── token-economics.md
-│
-├── implementation/
-│   ├── extending-current-system.md
-│   ├── markdown-conventions.md
-│   ├── model-metadata.md
-│   ├── prompt-patterns.md
-│   └── future-vision/
-│       ├── cursor-integration.md
-│       ├── claude-code-integration.md
-│       └── chatgpt-plugin.md
-│
-└── use-cases/
-    ├── code-review.md
-    ├── research.md
-    ├── debugging.md
-    └── learning.md
-
-TOTAL: 35+ documents, dual-layered (70+ if counting detail)
-```
-
-## Key Navigation Pattern
-
-```
-User at HOME:
-  "What is this?"
-         ↓
-  Read summary (5 min) → Click "See details"
-         ↓
-User sees HOME-DETAIL
-  "How does this work?"
-         ↓
-  Read core section → Click [link to Pillar 1]
-         ↓
-User at PILLAR 1 (summary)
-  "What's the first idea?"
-         ↓
-  Read pillar (3 min) → Click "Explore details"
-         ↓
-User at PILLAR 1-DETAIL
-  "How deep can I go?"
-         ↓
-  Read full context → Click [link to Pillar 2]
-  
-PATTERN: Summary → Decide → Detail → Link → Next
-```
+_Alt: Readers move summary → detail → next topic through breadcrumbs._
 
 ## Integration Points
 
 ```
-Agentic AI Tools (Cursor, Claude Code)
-         ↓
-Generate content using orchestration pattern
-         ↓
-Create navigable nodes (summary + detail)
-         ↓
-Render in 3-pane viewport
-         ↓
-Left pane:  Opus strategy
-Center pane: Haiku examples
-Right pane:  Sonnet validation
-         ↓
-User sees complete picture immediately
+Agentic tool (Cursor / Claude Code)
+          ↓
+Opus prompt templates
+          ↓
+Parallel Haiku executions
+          ↓
+Sonnet validation hook
+          ↓
+Render via 3-pane viewport
+          ↓
+Telemetry + cost tracking
 ```
+_Alt: Toolchain from IDE prompts through validation into the three-pane renderer._
+
+These integration hand-offs ensure every generated node captures model metadata, validation state, and links back to source prompts for transparency.
+
+## Legend & Conventions Recap
+
+- **Breadcrumbs** (`> **Path:** …`) anchor location inside the system.
+- **Validation badge** signals Sonnet (or human) review status.
+- **Column width** hard-capped at 400px (diagram enforced via `scripts/diagram-width-check.sh` in CI).
+- **Links** are extension-less (e.g., `token-economics`) to keep URL routing clean.
 
 ---
 
-**Start exploring:** Pick your path from [INDEX.md](INDEX.md) based on your role.
+**Start exploring:** Pick your path from [INDEX](INDEX) based on your role.
+
+---
+**Related**
+- [Next: Index](INDEX)
+- [See also: Quick Start](QUICK_START)
+- [Back: Home](home)

@@ -1,4 +1,15 @@
+---
+id: implementation-markdown-conventions
+title: "Markdown Conventions"
+models: [haiku]
+summary: true
+readTime: 4m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Implementation › Conventions
+> **Validation:** Reviewed by Sonnet ✓
+
 # Markdown Conventions
 
 ## Model Attribution
@@ -30,17 +41,17 @@ Every document must show which model created it:
 
 **Summary → Detail:**
 ```markdown
-[See details](auth-flow-detail.md)
+[See details](auth-flow-detail)
 ```
 
 **Navigate to sibling:**
 ```markdown
-[Explore](../jwt-tokens.md)
+[Explore](../jwt-tokens)
 ```
 
 **Cross-reference:**
 ```markdown
-[Learn more](../../architecture/data-model.md)
+[Learn more](../../architecture/data-model)
 ```
 
 ## Metadata
@@ -52,7 +63,7 @@ Use frontmatter for dual docs:
 id: auth-flow
 models: [opus, haiku]
 summary: true
-detail: auth-flow-detail.md
+detail: auth-flow-detail
 cost: $0.019
 readTime: 5m
 ---
@@ -88,5 +99,7 @@ Core components:
 ```
 
 ---
-
-**Next:** [Model Metadata](model-metadata.md) | **Reference:** [Column Format](../three-pillars/pillar-1/pillar-1-column-output.md)
+**Related**
+- [Next: Model Metadata](model-metadata)
+- [See also: Prompt Patterns](prompt-patterns)
+- [Back: Implementation Overview](extending-current-system)

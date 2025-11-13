@@ -8,6 +8,7 @@ readTime: 3m
 
 <!-- model: opus -->
 > **Path:** Home › Vision › Problem Statement
+> **Validation:** Reviewed by Sonnet ✓
 
 # What's Broken: The Problem
 
@@ -50,5 +51,7 @@ AI generates 10,000 tokens. You process 100. Result: 9,900 wasted tokens.
 4. **No transparency:** Which model did what?
 
 ---
-
-**Next:** [Solution Overview](solution-overview) | **Related:** [Token Economics](../../architecture/token-economics)
+**Related**
+- [Next: Solution Overview](solution-overview)
+- [See also: Token Economics](../../architecture/token-economics)
+- [Back: Vision Overview](vision)

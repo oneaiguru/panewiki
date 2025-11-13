@@ -1,4 +1,15 @@
+---
+id: implementation-prompt-patterns
+title: "Prompt Patterns"
+models: [opus]
+summary: false
+readTime: 6m
+---
+
 <!-- model: opus -->
+> **Path:** Home › Implementation › Prompt Patterns
+> **Validation:** Reviewed by Sonnet ✓
+
 # Prompt Patterns
 
 ## OPUS: Strategic Thinking
@@ -102,5 +113,7 @@ async function orchestrate(userQuery) {
 ```
 
 ---
-
-**Reference:** [Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration.md)
+**Related**
+- [Next: Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration)
+- [See also: Model Metadata](model-metadata)
+- [Back: Implementation Overview](extending-current-system)

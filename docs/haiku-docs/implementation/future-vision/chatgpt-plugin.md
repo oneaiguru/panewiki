@@ -1,4 +1,15 @@
+---
+id: future-vision-chatgpt-plugin
+title: "Future Vision: ChatGPT Plugin"
+models: [haiku]
+summary: true
+readTime: 4m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Implementation › Future Vision
+> **Validation:** Reviewed by Sonnet ✓
+
 # Future Vision: ChatGPT Plugin
 
 ## Vision
@@ -36,18 +47,58 @@ Right: Comparison matrix (validation)
 
 ## Technical Implementation
 
-### Manifest
+### Manifest (Conceptual)
 
 ```json
 {
   "name": "3-Column Reader",
-  "version": "1.0",
-  "operations": [
-    "GET /orchestrate",
-    "GET /render-ui"
-  ]
+  "version": "concept",
+  "description": "Renders Opus/Haiku/Sonnet columns",
+  "schema": {
+    "auth": "bearer",
+    "endpoints": [
+      "POST /orchestrate",
+      "GET /render-ui"
+    ]
+  }
 }
 ```
+
+> This manifest is illustrative, not vendor-spec compliant. Actual plugin formats (OpenAI, Anthropic, etc.) have stricter contracts.
+
+### Response Envelope
+
+```json
+{
+  "columns": [
+    {
+      "role": "opus",
+      "title": "Strategy",
+      "content": "...",
+      "links": ["pillar-1/pillar-1-column-output"]
+    },
+    {
+      "role": "haiku",
+      "title": "Examples",
+      "content": "...",
+      "links": ["use-cases/code-review"]
+    },
+    {
+      "role": "sonnet",
+      "title": "Validation",
+      "content": "...",
+      "links": ["appendix/pricing"]
+    }
+  ],
+  "validation": {
+    "reviewedBy": "sonnet",
+    "status": "✓",
+    "notes": ["No PII detected"]
+  }
+}
+```
+
+Include rate limiting and PII checks before returning payloads. The plugin should refuse to render sensitive data and surface cost estimates sourced from [Pricing](../../appendix/pricing).
 
 ### Flow
 
@@ -76,9 +127,11 @@ Plugin renders 3-pane UI
 ## Pricing Model
 
 - Free: Public documents, shared view
-- Pro: Private documents, cost tracking
-- Enterprise: Custom styling, API access
+- Pro: Private documents, cost tracking (tie to [Pricing](../../appendix/pricing))
+- Enterprise: Custom styling, API access, SLAs
 
 ---
-
-**Related:** [Cursor Integration](cursor-integration.md) | [Claude Code Integration](claude-code-integration.md)
+**Related**
+- [Next: Cursor Integration](cursor-integration)
+- [See also: Claude Code Integration](claude-code-integration)
+- [Back: Implementation Overview](../extending-current-system)

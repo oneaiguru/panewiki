@@ -1,4 +1,15 @@
+---
+id: vision-overview
+title: "Why This Matters: The Paradigm Shift"
+models: [opus]
+summary: true
+readTime: 3m
+---
+
 <!-- model: opus -->
+> **Path:** Home › Vision
+> **Validation:** Reviewed by Sonnet ✓
+
 # Why This Matters: The Paradigm Shift
 
 ## The Fundamental Problem
@@ -45,16 +56,16 @@ It's not aesthetic. It's cognitive science.
 ### 3. Not All AI Work Costs The Same
 
 ```
-Opus:  $15/M tokens  (Strategic thinking)
-Haiku: $0.80/M tokens (Execution)
-       18.75× difference
-
-Using Opus for everything = paying $1 for $0.05 work.
+Opus:  Strategic thinking (premium, see Pricing)
+Haiku: Execution (low-cost, see Pricing)
+       Huge delta → orchestrate intentionally
 ```
+
+Rates: see [Pricing](../appendix/pricing) for current input/output costs.
 
 **Smart orchestration:** Opus thinks (once, expensive), Haiku executes (parallel, cheap), Sonnet validates (moderate, reliable).
 
-Result: 87% cost reduction + BETTER quality.
+Result: ≈81% cost reduction (scenario in [Pricing](../appendix/pricing)) + BETTER quality.
 
 ## The Paradigm Shift
 
@@ -84,4 +95,8 @@ FROM: Linear scrolling          TO: Layered navigation
 
 ---
 
-**Deep dive:** [Problem Statement](problem-statement) | **Learn:** [How Columns Work](../three-pillars/pillar-1/pillar-1-column-output) | **See cost savings:** [Token Economics](../architecture/token-economics)
+---
+**Related**
+- [Next: Problem Statement](problem-statement)
+- [See also: Solution Overview](solution-overview)
+- [Back: Home](../home)

@@ -1,4 +1,15 @@
+---
+id: implementation-extending-system
+title: "Implementation: Extending Current System"
+models: [sonnet]
+summary: false
+readTime: 6m
+---
+
 <!-- model: sonnet -->
+> **Path:** Home › Implementation › Extending System
+> **Validation:** Reviewed by Sonnet ✓
+
 # Implementation: Extending Current System
 
 ## The Data Model Extension
@@ -45,5 +56,7 @@ Extended node (NEW):
 4. **Cost tracking:** Log tokens per model per document
 
 ---
-
-**Next:** [Markdown Conventions](markdown-conventions.md) | **See:** [Data Model](../architecture/data-model.md)
+**Related**
+- [Next: Markdown Conventions](markdown-conventions)
+- [See also: Data Model](../architecture/data-model)
+- [Back: Home](../home)

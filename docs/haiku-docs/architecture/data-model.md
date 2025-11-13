@@ -17,12 +17,12 @@ type ISO8601 = string;
 interface ModelMetadataBase {
   prompt: string;
   tokens: number;
-  timestamp: ISO8601;
+  timestamp?: ISO8601;
 }
 
 // Metadata for individual Haiku runs (supports parallelization)
 interface HaikuRunMetadata extends ModelMetadataBase {
-  parallelIndex?: number;    // Index when running parallel calls
+  parallelIndex?: number;        // If parallel calls
 }
 
 interface NavigableNode {
@@ -34,44 +34,42 @@ interface NavigableNode {
   summary: {
     content: string;             // ~30 lines, human-optimized
     lineCount: number;           // For UI hints
-    estimatedReadSeconds: number;   // Read time in seconds
+    estimatedReadSeconds: number;// Always seconds for consistency
   };
-
-  detail?: {                     // Optional - not all nodes need detail
+  
+  detail?: {
     content: string;             // ~100 lines, full context
     lineCount: number;
-    estimatedReadSeconds: number;   // Read time in seconds
+    estimatedReadSeconds: number;
   };
   
   // Model Attribution
   modelSource: 'opus' | 'haiku' | 'sonnet' | 'combined';
-  modelMetadata: {
+  modelMetadata?: {
     opus?: ModelMetadataBase;
-    haikuRuns?: HaikuRunMetadata[];  // Array to support parallel calls
+    haikuRuns?: Array<HaikuRunMetadata>;
     sonnet?: ModelMetadataBase;
   };
   
   // Navigation Context
   breadcrumb: string[];          // ["home", "architecture", "data-model"]
-  linkedFrom: string[];          // BUILD-TIME: Computed from graph, not persisted
   linkedTo: string[];            // Nodes this links to
-  linkedDetailOnly: string[];    // Links only visible in detail view
-
+  linkedDetailOnly?: string[];   // Links only visible in detail view
+  
   // Content Classification
   category: 'concept' | 'guide' | 'reference' | 'use-case';
-  tags: string[];                // ["architecture", "data", "structure"]
-
-  // Capabilities (UI Helpers - computed at build time)
-  hasDetailLayer: boolean;       // BUILD-TIME: Derived from (detail !== undefined)
-  requiresValidation: boolean;   // Does this need Sonnet review?
-  canParallelize: number;        // How many parallel Haiku calls? (0 = none)
+  tags?: string[];               // ["architecture", "data", "structure"]
+  
+  // Capabilities
+  requiresValidation?: boolean;  // Does this need Sonnet review?
+  canParallelize?: number;       // How many parallel Haiku calls? (0 = none)
   
   // Cost Tracking
-  cost: {
-    opus: number;                // Tokens or cost
-    haiku: number;
-    sonnet: number;
-    total: number;               // Aggregate
+  cost?: {
+    opus?: number;               // Tokens or cost
+    haiku?: number;
+    sonnet?: number;
+    total?: number;              // Aggregate
   };
   
   // Version & Metadata
@@ -82,54 +80,50 @@ interface NavigableNode {
 }
 ```
 
+Derived helpers such as linkedFrom or "has detail?" are computed by the build step: linkedFrom comes from the graph index, and the UI simply checks Boolean(node.detail) when deciding whether to show "See details." We no longer persist those values on every node.
+
 ## The Dual-Layer Contract
 
-**Rule 1: Summary Always Exists**
-```
-Every node MUST have a summary.
-Summary is ALWAYS the entry point.
-User lands on summary first.
-```
+### Rule 1: Summary Always Exists
+- Every node MUST have a summary.
+- Summary is ALWAYS the entry point.
+- User lands on summary first.
 
-**Rule 2: Detail is Optional**
-```
-Not all nodes need detail.
-If detail exists: Show "See details" link
-If detail doesn't exist: No link shown
+### Rule 2: Detail is Optional
+- Not all nodes need detail.
+- If detail exists: Show "See details" link
+- If detail doesn't exist: No link shown
 
 Examples:
-✓ Create detail for: Complex topics, multi-step processes
-✗ Skip detail for: Simple definitions, quick references
-```
+- Create detail for: Complex topics, multi-step processes
+- Skip detail for: Simple definitions, quick references
 
-**Rule 3: Links are Directional**
-```
+### Rule 3: Links are Directional
 If Node A links to Node B:
-  → linkedTo: ["node-b"]
-  
-Node B automatically knows:
-  → linkedFrom: ["node-a"]
-
-Links in detail view only:
-  → linkedDetailOnly: ["node-security-proofs"]
+```
+linkedTo: ["node-b"]
+```
+The graph layer backfills Node B's inbound view, so UI code can ask:
+```
+getLinkedFrom("node-b") → ["node-a"]
+```
+Links only in detail view:
+```
+linkedDetailOnly: ["node-security-proofs"]
 ```
 
-**Rule 4: Model Attribution is Visible**
+### Rule 4: Model Attribution is Visible
+Every node shows one of:
 ```
-Every node shows:
 <!-- model: opus -->
-or
 <!-- model: haiku -->
-or
 <!-- model: opus, haiku -->
-
-Result: Users learn optimal AI patterns
 ```
+Result: users learn optimal AI patterns.
 
 ## Practical Examples
 
 ### Example 1: Simple Node (No Detail)
-
 ```typescript
 const homeNode = {
   id: "home",
@@ -161,7 +155,6 @@ homeNode.cost = calculateNodeCost(homeNode);
 ```
 
 ### Example 2: Complex Node (With Detail)
-
 ```typescript
 const tokenEconomicsNode = {
   id: "token-economics",
@@ -170,21 +163,19 @@ const tokenEconomicsNode = {
   summary: {
     content: "<!-- model: sonnet -->\n# Token Economics\n\n...",
     lineCount: 35,
-    estimatedReadSeconds: 300  // ~5 minutes
+    estimatedReadSeconds: 300
   },
 
   detail: {
     content: "<!-- model: sonnet -->\n# Token Economics (Full)\n\n...",
     lineCount: 187,
-    estimatedReadSeconds: 900  // ~15 minutes
+    estimatedReadSeconds: 900
   },
 
-  // hasDetailLayer computed from detail !== undefined
   canParallelize: 0,
 
   linkedTo: ["pillar-3", "implementation"],
   linkedDetailOnly: ["jwt-math-proofs"],
-  linkedFrom: ["home", "architecture"],  // Computed at build time from graph
 
   category: "reference",
   tags: ["cost", "efficiency", "economics"],
@@ -203,7 +194,6 @@ tokenEconomicsNode.cost = calculateNodeCost(tokenEconomicsNode);
 ```
 
 ### Example 3: Orchestrated Output (Multi-Model)
-
 ```typescript
 const authImplementationNode = {
   id: "auth-implementation",
@@ -212,17 +202,17 @@ const authImplementationNode = {
   summary: {
     content: "<!-- model: opus -->\n# Auth: Strategic Layer\n\n...",
     lineCount: 30,
-    estimatedReadSeconds: 300  // ~5 minutes
+    estimatedReadSeconds: 300
   },
 
   detail: {
     content: "<!-- model: opus, haiku, sonnet -->\n# Auth (Complete)\n\n...",
     lineCount: 250,
-    estimatedReadSeconds: 1200  // ~20 minutes
+    estimatedReadSeconds: 1200
   },
 
-  canParallelize: 3,  // 3 parallel Haiku calls for examples
-  requiresValidation: true,  // Sonnet reviews examples
+  canParallelize: 3,            // 3 parallel Haiku calls for examples
+  requiresValidation: true,     // Sonnet reviews examples
 
   modelMetadata: {
     opus: {
@@ -231,24 +221,9 @@ const authImplementationNode = {
       timestamp: "2025-11-13T05:00:00Z"
     },
     haikuRuns: [
-      {
-        prompt: "Example for component 1",
-        tokens: 1000,
-        timestamp: "2025-11-13T05:01:00Z",
-        parallelIndex: 0
-      },
-      {
-        prompt: "Example for component 2",
-        tokens: 1000,
-        timestamp: "2025-11-13T05:01:00Z",
-        parallelIndex: 1
-      },
-      {
-        prompt: "Example for component 3",
-        tokens: 1000,
-        timestamp: "2025-11-13T05:01:00Z",
-        parallelIndex: 2
-      }
+      { prompt: "Example for component 1", tokens: 1000, timestamp: "2025-11-13T05:01:00Z", parallelIndex: 0 },
+      { prompt: "Example for component 2", tokens: 1000, timestamp: "2025-11-13T05:01:00Z", parallelIndex: 1 },
+      { prompt: "Example for component 3", tokens: 1000, timestamp: "2025-11-13T05:01:00Z", parallelIndex: 2 }
     ],
     sonnet: {
       prompt: "Validate all examples",
@@ -266,69 +241,56 @@ authImplementationNode.cost = calculateNodeCost(authImplementationNode);
 ## Link Integrity Rules
 
 ### Rule 1: Bidirectional Tracking
-
 ```typescript
 // If node-a links to node-b:
-nodeA.linkedTo = [..., "node-b"]
+nodeA.linkedTo = [..., "node-b"];
 
-// Then node-b MUST know:
-nodeB.linkedFrom = [..., "node-a"]
+// The build pipeline scans all nodes' linkedTo arrays
+// and stores the edges in a graph index. At runtime,
+// the UI can query for inbound links:
+const inbound = graph.getLinkedFrom("node-b"); // ["node-a"]
 
-// This is computed at BUILD TIME:
-// The build process scans all nodes' linkedTo arrays
-// and automatically populates linkedFrom for each target node.
-// linkedFrom is NOT persisted - it's derived from the graph.
+// linkedFrom is NOT persisted on nodes - it's derived from the graph.
 ```
 
 ### Rule 2: Circular Links are OK
-
-```typescript
-Node A → Pillar 1 → Pillar 2 → Pillar 3 → Architecture → A
-
-This is intentional: users can explore freely.
-Prevents "dead ends" in navigation.
 ```
+Node A → Pillar 1 → Pillar 2 → Pillar 3 → Architecture → A
+```
+This is intentional: users can explore freely and prevents dead ends.
 
 ### Rule 3: Detail-Only Links
-
 ```typescript
 // Some links only appear in detail view:
 linkedDetailOnly: ["security-proofs", "math-derivations"]
-
-Why? Summary is concise; detail is reference.
-Prevents cluttering summary with advanced topics.
 ```
+Why? Summary is concise; detail is reference.
 
 ## Rendering in 3-Pane Viewport
-
 ```
-When user navigates to a node:
-
 ┌──────────────┬──────────────────┬──────────────────┐
 │ Navigation   │ Display          │ Related          │
 │ (sidebar)    │ (center)         │ (right)          │
 ├──────────────┼──────────────────┼──────────────────┤
 │ [Node Tree]  │ [Node.summary]   │ [Node.linkedTo]  │
 │              │                  │ [Metadata]       │
-│              │ [See details →]  │ [Model info]     │
-│              │ (if haDetail)    │                  │
-│              │                  │ [Breadcrumb]     │
+│              │ [See details →]  │ [Breadcrumb]     │
+│              │ (if detail)      │                  │
 └──────────────┴──────────────────┴──────────────────┘
-
-Click "See details" → Shift center pane to [Node.detail]
 ```
+Click "See details" → shift center pane to [Node.detail]
 
 ## Cost Calculation
-
 Every node tracks cost:
 
 ```typescript
 // pricing.ts
 export const PRICING = {
   OPUS_PER_TOKEN_USD:   15 / 1_000_000,
-  HAIKU_PER_TOKEN_USD:  0.80 / 1_000_000,
-  SONNET_PER_TOKEN_USD: 3 / 1_000_000,
+  HAIKU_PER_TOKEN_USD:  1  / 1_000_000,  // corrected
+  SONNET_PER_TOKEN_USD: 3  / 1_000_000,
 } as const;
+
 // cost.ts
 import { PRICING } from './pricing';
 
@@ -338,9 +300,9 @@ type NodeCost = {
 };
 
 export function calculateNodeCost(node: NavigableNode): NodeCost {
-  const opusT   = node.modelMetadata.opus?.tokens ?? 0;
-  const haikuT  = node.modelMetadata.haikuRuns?.reduce((sum, run) => sum + run.tokens, 0) ?? 0;
-  const sonnetT = node.modelMetadata.sonnet?.tokens ?? 0;
+  const opusT    = node.modelMetadata?.opus?.tokens ?? 0;
+  const haikuT   = (node.modelMetadata?.haikuRuns ?? []).reduce((sum, run) => sum + run.tokens, 0);
+  const sonnetT  = node.modelMetadata?.sonnet?.tokens ?? 0;
 
   const opusUSD   = opusT   * PRICING.OPUS_PER_TOKEN_USD;
   const haikuUSD  = haikuT  * PRICING.HAIKU_PER_TOKEN_USD;
@@ -353,30 +315,23 @@ export function calculateNodeCost(node: NavigableNode): NodeCost {
 }
 ```
 
-> Rates align with **Token Economics**: Opus $15/M, Haiku $0.80/M, Sonnet $3/M.
+Rates align with Token Economics (input rates): Opus $15/M, Haiku $1/M, Sonnet $3/M. See [Pricing](../appendix/pricing).
 
 ```typescript
 const node = buildNodeFromLLMs();
 node.cost = calculateNodeCost(node);
-
-// Result visible to user:
-// "Generated by Opus ($0.003) + Haiku ($0.001) + Sonnet ($0.0015)"
+// Example: "Generated by Opus ($0.003) + Haiku ($0.003) + Sonnet ($0.0015)"
 ```
 
 ## System Invariants
+- Every node has summary
+- Every node has unique id
+- Summary read time ≤ 10 minutes
+- Detail read time ≤ 30 minutes
+- Links point to real nodes
+- linkedFrom auto-generated (not manual)
+- Model attribution always visible
+- Cost always tracked
+- Breadcrumb accurate and current
 
-```
-✓ Every node has summary
-✓ Every node has unique id
-✓ Summary read time ≤ 10 minutes
-✓ Detail read time ≤ 30 minutes
-✓ Links point to real nodes
-✓ linkedFrom auto-generated (not manual)
-✓ Model attribution always visible
-✓ Cost always tracked
-✓ Breadcrumb accurate and current
-```
-
----
-
-**Reference:** [Information Flow](information-flow) | **See:** [Model Metadata](../implementation/model-metadata) | **Learn:** [Dual Representation](../three-pillars/pillar-2/pillar-2-dual-representation)
+Reference: [Information Flow](../architecture/information-flow) | See: [Model Metadata](../implementation/model-metadata) | Learn: [Dual Representation](../three-pillars/pillar-2/pillar-2-dual-representation)

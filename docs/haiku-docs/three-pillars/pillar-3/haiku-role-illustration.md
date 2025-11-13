@@ -8,6 +8,7 @@ readTime: 5m
 
 <!-- model: haiku -->
 > **Path:** Home › Pillars › Pillar 3 › Haiku Role
+> **Validation:** Reviewed by Sonnet ✓
 
 # Haiku Role: The Execution Layer
 
@@ -49,8 +50,9 @@ Haiku is the **execution and illustration layer**. Its job: create working examp
 ## Cost Structure
 
 See [Pricing Appendix](../../appendix/pricing):
-- Input/Output: $1/M (see appendix for current rates)
-- Per call: ~1000 tokens
+- Input: $1/M (Haiku prompt cost)
+- Output: $5/M (Haiku generation cost)
+- Per call: ~1000 output tokens
 - Parallel: 4 calls simultaneous
 
 **Example:** 4 parallel Haiku calls = same time, 1/4 cost vs sequential
@@ -101,5 +103,7 @@ has single responsibility.
 ```
 
 ---
-
-**Related:** [Opus Role](opus-role-essence) | [Sonnet Role](sonnet-role-review) | [Model Orchestration](pillar-3-model-orchestration)
+**Related**
+- [Next: Sonnet Role](sonnet-role-review)
+- [See also: Opus Role](opus-role-essence)
+- [Back: Pillar 3 Summary](pillar-3-model-orchestration)

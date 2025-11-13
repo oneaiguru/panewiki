@@ -1,4 +1,15 @@
+---
+id: pillar-2-dual-representation
+title: "Pillar 2: Dual Representation"
+models: [opus]
+summary: true
+readTime: 5m
+---
+
 <!-- model: opus -->
+> **Path:** Home › Three Pillars › Pillar 2
+> **Validation:** Reviewed by Sonnet ✓
+
 # Pillar 2: Dual Representation
 
 ## The Core Idea
@@ -44,5 +55,7 @@ Security considerations: Token rotation, expiration...
 ```
 
 ---
-
-**Learn:** [How Layers Work](pillar-2-detail.md) | **Compare:** [Pillar 1: Columns](../pillar-1/pillar-1-column-output.md) | **Next:** [Pillar 3: Model Orchestration](../pillar-3/pillar-3-model-orchestration.md)
+**Related**
+- [Next: Pillar 2 Detail](pillar-2-detail)
+- [See also: Pillar 1 Columns](../pillar-1/pillar-1-column-output)
+- [Back: Home](../../home)

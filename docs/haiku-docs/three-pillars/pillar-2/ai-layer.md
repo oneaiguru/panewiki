@@ -8,6 +8,7 @@ readTime: 5m
 
 <!-- model: haiku -->
 > **Path:** Home › Pillars › Pillar 2 › AI Layer
+> **Validation:** Reviewed by Sonnet ✓
 
 # The AI Layer: Complete Context
 
@@ -99,5 +100,7 @@ Detail layer catches:
 These are easy to miss in summary.
 
 ---
-
-**Related:** [Human Layer](human-layer) | [Navigation Between Layers](navigation-between-layers)
+**Related**
+- [Next: Navigation Between Layers](navigation-between-layers)
+- [See also: Human Layer](human-layer)
+- [Back: Pillar 2 Detail](pillar-2-detail)

@@ -1,4 +1,15 @@
+---
+id: pillar-3-opus-role
+title: "Opus Role: The Essence Layer"
+models: [opus]
+summary: true
+readTime: 4m
+---
+
 <!-- model: opus -->
+> **Path:** Home › Three Pillars › Pillar 3 › Opus
+> **Validation:** Reviewed by Sonnet ✓
+
 # Opus Role: The Essence Layer
 
 ## What Opus Does
@@ -42,7 +53,7 @@ For each component:
 
 ## Cost
 
-~$0.003 (200 tokens at $15/M)
+≈$0.003 (200 tokens at the Opus input rate, per [Pricing](../../appendix/pricing))
 
 ## Token Usage
 
@@ -70,5 +81,7 @@ Instructions for Haiku:
 ```
 
 ---
-
-**Related:** [Haiku Role](haiku-role-illustration.md) | [Sonnet Role](sonnet-role-review.md) | [Model Orchestration](pillar-3-model-orchestration.md)
+**Related**
+- [Next: Haiku Role](haiku-role-illustration)
+- [See also: Sonnet Role](sonnet-role-review)
+- [Back: Pillar 3 Summary](pillar-3-model-orchestration)

@@ -1,4 +1,15 @@
+---
+id: index
+title: "Navigation Hub"
+models: [opus]
+summary: true
+readTime: 6m
+---
+
 <!-- model: opus -->
+> **Path:** Home › Index
+> **Validation:** Reviewed by Sonnet ✓
+
 # 3-Column Interface Documentation
 
 ## Complete Navigation Map
@@ -102,9 +113,9 @@
 
 ### Cost Efficiency
 
-- **Naive approach** (all-Opus): $0.06 per design task
-- **Orchestrated approach**: $0.0075 per design task
-- **Savings: 87.5%**
+- **Naive approach** (all-Opus output, 4K tokens): $0.30 per task
+- **Orchestrated approach**: ≈$0.055 per task
+- **Savings: ≈81% (scenario in [Pricing](appendix/pricing))**
 
 ### Time Efficiency
 
@@ -158,3 +169,8 @@
 
 **Ready to dive in? Start with [Home](home)** → 5 minutes to understand the core idea.
 
+---
+**Related**
+- [Next: Home](home)
+- [See also: Quick Start](QUICK_START)
+- [Back: System Map](SYSTEM)

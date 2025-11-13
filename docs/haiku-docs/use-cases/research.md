@@ -1,4 +1,15 @@
+---
+id: use-case-research
+title: "Use Case: Research Workflow"
+models: [haiku]
+summary: true
+readTime: 7m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Use Cases › Research
+> **Validation:** Reviewed by Sonnet ✓
+
 # Use Case: Research Workflow
 
 ## The Scenario
@@ -10,28 +21,9 @@ User: "Research AI agent patterns"
 
 ## 3-Pane Research Flow
 
-```
-┌──────────────┬────────────────┬──────────────┐
-│ STRATEGY     │ EXAMPLES       │ COMPARISON   │
-│ (Opus)       │ (Haiku)        │ (Sonnet)     │
-├──────────────┼────────────────┼──────────────┤
-│ Top 5        │ Pattern A:     │ ✓ Pattern A  │
-│ patterns:    │ ReAct          │ best for     │
-│              │ • Reasoning    │ complex      │
-│ • ReAct      │ • Acting       │ tasks        │
-│ • Chain      │ • Observing    │              │
-│   of Thought │                │ ⚠ Pattern B  │
-│ • Tree       │ Pattern B:     │ slower in    │
-│   Search     │ Chain of       │ practice     │
-│ • Reflection │ Thought        │              │
-│ • Autonomy   │ • Step-by-step │ ✓ Pattern C  │
-│              │ • Self-critique│ most robust  │
-│ Cost: $0.003 │ • Verification│              │
-│              │                │ Cost: $0.0015
-│              │ Cost: $0.001   │
-│              │ each           │
-└──────────────┴────────────────┴──────────────┘
-```
+- **Strategy (Opus):** Lists top 5 agent patterns (ReAct, Chain of Thought, Tree Search, Reflection, Autonomy). Cost ≈$0.003.  
+- **Examples (Haiku):** Breaks down each pattern with reasoning, acting, observing, self-critique. ≈$0.005 per pattern.  
+- **Comparison (Sonnet):** Marks which pattern fits (✓ / ⚠), calls out trade-offs, recommends next steps. ≈$0.0075.  
 
 ## Workflow
 
@@ -50,5 +42,7 @@ User sees:
 Time: 20 minutes (vs 2+ hours manual)
 
 ---
-
-**Compare:** [Code Review](code-review.md) | **Learn:** [Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration.md)
+**Related**
+- [Next: Debugging](debugging)
+- [See also: Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration)
+- [Back: Home](../home)

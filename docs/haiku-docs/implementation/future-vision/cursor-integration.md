@@ -1,4 +1,15 @@
+---
+id: future-vision-cursor
+title: "Future Vision: Cursor Integration"
+models: [haiku]
+summary: true
+readTime: 3m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Implementation › Future Vision
+> **Validation:** Reviewed by Sonnet ✓
+
 # Future Vision: Cursor Integration
 
 ## Vision
@@ -54,5 +65,7 @@ Right: Validation results, gaps found
 - ✓ Team onboarding faster
 
 ---
-
-**Related:** [Claude Code Integration](claude-code-integration.md) | [ChatGPT Plugin](chatgpt-plugin.md)
+**Related**
+- [Next: Claude Code Integration](claude-code-integration)
+- [See also: ChatGPT Plugin](chatgpt-plugin)
+- [Back: Implementation Overview](../extending-current-system)

@@ -1,71 +1,104 @@
+---
+id: architecture-token-economics
+title: "Token Economics: The Math"
+models: [sonnet]
+summary: false
+readTime: 8m
+---
+
 <!-- model: sonnet -->
+> **Path:** Home › Architecture › Token Economics
+> **Validation:** Reviewed by Sonnet ✓
+
 # Token Economics: The Math
 
-## Pricing Reality
+## Pricing Reality (see [Pricing](../appendix/pricing))
+
+| Model | Input focus | Output focus | Notes |
+|-------|-------------|--------------|-------|
+| **Opus 4.1** | Premium | Premium | Use sparingly for strategy/architecture. |
+| **Sonnet 4.5** | Mid-tier | Mid-tier | Ideal for validation & synthesis. |
+| **Haiku 4.5** | Budget | Budget | Use for execution, examples, batch work. |
+
+## Scenario Inputs
+
+| Component | Tokens | Role |
+|-----------|--------|------|
+| Opus planning | 200 input | Strategy brief + work plan |
+| Haiku execution | 3 × 1,000 output | Code/examples per component |
+| Sonnet validation | 500 output | QA + recommendations |
+
+Total tokens: **200 input + 3,500 output**.
+
+## Scenario A — All Opus (Naive)
 
 ```
-Claude Opus 4:     $15.00 / 1M tokens
-Claude Sonnet 4.5: $3.00  / 1M tokens
-Claude Haiku 4.5:  $0.80  / 1M tokens
-
-Cost ratio: Opus is 18.75× more expensive than Haiku
+4,000 output tok × $75/M = $0.30
 ```
 
-## Example: Design Authentication System
+## Scenario B — Orchestrated (Real-time)
 
-### All-Opus (Naive)
 ```
-1. Opus: Architecture          500 tokens
-2. Opus: User model code      1000 tokens
-3. Opus: Middleware code      1000 tokens
-4. Opus: Endpoint examples    1000 tokens
-5. Opus: Security review       500 tokens
-────────────────────────────────
-Total: 4000 tokens × $15/M = $0.06
+Opus:   200 in × $15/M  = $0.0030
+Haiku:  3000 out × $5/M = $0.0150
+Sonnet:  500 out × $15/M= $0.0075
+─────────────────────────────────
+Total ≈ $0.0255 (≈81% savings)
 ```
 
-### Three-Model Orchestration
+## Scenario C — Orchestrated + Batch (50% discount)
+
+Batching the same work cuts the total in half:
 ```
-1. Opus: Architecture (200)           → $0.003
-2. Haiku: User model (1000)           → $0.001
-3. Haiku: Middleware (1000)           → $0.001
-4. Haiku: Endpoints (1000)            → $0.001
-5. Sonnet: Security review (500)      → $0.0015
-─────────────────────────────────────
-Total: ~5700 tokens = $0.0075 (87.5% cheaper)
+Total_batch ≈ $0.01275
 ```
+
+Label any more aggressive claim (e.g., $0.00525) with the assumptions: shorter outputs + Batch API + cached prompts.
+
+## Assumptions Table
+
+| Symbol | Meaning | Example |
+|--------|---------|---------|
+| `N` | Number of components | 3 Haiku calls |
+| `T_opus` | Opus input tokens | 200 |
+| `T_haiku` | Tokens per Haiku call | 1,000 |
+| `T_sonnet` | Sonnet output tokens | 500 |
+| `R_model` | Rate per 1M tokens | See [Pricing](../appendix/pricing) |
 
 ## General Formula
 
-For any task with N components:
-
 ```
-Naive cost:     (N + 1) × N_tokens × $15/M
+Naive_all_opus = T_total_out × R_opus_out
 
-Orchestrated:   
-  Opus:    1 × 200 × $15 / 1M
-  Haiku:   N × 1000 × $0.80 / 1M
-  Sonnet:  1 × 500 × $3 / 1M
+Orchestrated_real_time = (T_opus × R_opus_in) +
+                         (N × T_haiku × R_haiku_out) +
+                         (T_sonnet × R_sonnet_out)
 
-For N=5:
-  Naive:   6 × 3000 × $15/M = $0.27
-  Orch:    200×15 + 5×1000×0.8 + 500×3 / 1M = $0.011
-  
-  Reduction: 95.9%
+Batch_discount = 0.5 × Orchestrated_real_time
 ```
 
-## When Orchestration Matters Most
+Plug in the real token counts for your workload. If Haiku outputs are shorter (e.g., 400 tokens), the savings increase further because Haiku stays cheap while Opus remains capped.
 
-**High savings when:**
-- Task has multiple similar components (N > 3)
-- Each component needs separate illustration
-- Quality validation adds value
+## Savings Range
 
-**Savings diminish when:**
-- Task is simple (single component)
-- No parallel work possible
-- Validation not critical
+- **Small jobs (N ≤ 2):** 20–40% savings (less fan-out).
+- **Medium jobs (N = 3–5):** 60–80% savings (scenario B above).
+- **Large jobs (N ≥ 6):** 80–90% savings if Haiku runs in parallel and Sonnet validates summaries instead of full transcripts.
+
+## When Orchestration Shines
+
+- Tasks decompose into parallelizable units.
+- Validation adds business value (security, compliance, QA).
+- Teams want predictable, explainable costs (tie every decision back to [Pricing](../appendix/pricing)).
+
+## When to Stay All-Opus
+
+- Highly novel problems without repeatable components.
+- Extremely short prompts where orchestration overhead dominates.
+- Latency-sensitive work when Batch API isn't acceptable.
 
 ---
-
-**Reference:** [Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration.md) | **Learn:** [Information Flow](information-flow.md)
+**Related**
+- [Next: Viewport Semantics](viewport-semantics)
+- [See also: Pricing](../appendix/pricing)
+- [Back: Index](../INDEX)
