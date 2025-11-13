@@ -70,6 +70,19 @@ function navigationReducer(state, action) {
 }
 
 export default function V1NavigationPrototype() {
+  const dataIsValid = DOCS && typeof DOCS === 'object' && !Array.isArray(DOCS);
+  if (!dataIsValid) {
+    return (
+      <div style={styles.app}>
+        <div style={styles.errorPane}>
+          <h2>Fatal Error</h2>
+          <p>Either docsData failed to load or exported an invalid structure.</p>
+          <p>Expected an object, received: {String(typeof DOCS)}</p>
+        </div>
+      </div>
+    );
+  }
+
   const homeDoc = DOCS[START_DOC_ID];
 
   if (!homeDoc) {
@@ -93,37 +106,71 @@ function NavigationShell({ homeId }) {
   });
   const [state, dispatch] = useReducer(navigationReducer, undefined, initializer);
   const stateRef = useRef(state);
+  stateRef.current = state;
   const scrollRef = useRef(null);
   const currentPaneRef = useRef(null);
   const toastTimerRef = useRef(null);
-  const [toast, setToast] = useState('');
+  const [toastQueue, setToastQueue] = useState([]);
+  const [activeToast, setActiveToast] = useState(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
+    if (typeof window === 'undefined') {
+      setIsReady(true);
+      return undefined;
+    }
+    const raf = window.requestAnimationFrame(() => setIsReady(true));
+    return () => window.cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
+    if (!toastQueue.length) {
+      if (activeToast !== null) {
+        setActiveToast(null);
+      }
+      return;
+    }
+    const current = toastQueue[0];
+    if (activeToast && activeToast.id === current.id) {
+      return;
+    }
+    setActiveToast(current);
+  }, [toastQueue, activeToast]);
+
+  useEffect(() => {
+    if (!activeToast) return undefined;
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+    toastTimerRef.current = setTimeout(() => {
+      setToastQueue((prev) => prev.slice(1));
+    }, 2000);
     return () => {
       if (toastTimerRef.current) {
         clearTimeout(toastTimerRef.current);
       }
     };
-  }, []);
+  }, [activeToast]);
 
   const showToast = (message) => {
-    setToast(message);
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = setTimeout(() => setToast(''), 2000);
+    setToastQueue((prev) => [
+      ...prev,
+      { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, message },
+    ]);
   };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       const activeTag = document.activeElement?.tagName?.toLowerCase();
+      const activeRole = document.activeElement?.getAttribute?.('role');
+      const interactiveTags = ['button', 'a', 'select'];
       const isTyping =
         activeTag === 'input' ||
         activeTag === 'textarea' ||
         document.activeElement?.isContentEditable;
-      if (isTyping) return;
+      const isInteractiveControl = interactiveTags.includes(activeTag || '') || activeRole === 'button';
+      if (isTyping || isInteractiveControl) return;
+      if (e.repeat) return;
 
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
@@ -152,20 +199,47 @@ function NavigationShell({ homeId }) {
   }, [state.currentIndex]);
 
   useEffect(() => {
-    if (currentPaneRef.current) {
-      currentPaneRef.current.focus();
+    if (typeof window === 'undefined') {
+      if (currentPaneRef.current) {
+        currentPaneRef.current.focus();
+      }
+      return undefined;
     }
+    const raf = window.requestAnimationFrame(() => {
+      if (currentPaneRef.current) {
+        try {
+          currentPaneRef.current.focus({ preventScroll: true });
+        } catch (err) {
+          currentPaneRef.current.focus();
+        }
+      }
+    });
+    return () => window.cancelAnimationFrame(raf);
   }, [state.currentIndex]);
 
   useEffect(() => {
-    const firstPane = scrollRef.current?.querySelector('.pane');
-    if (!firstPane) return;
-    const width = firstPane.getBoundingClientRect().width;
-    if (Math.abs(width - 400) > 1) {
-      // eslint-disable-next-line no-console
-      console.warn(`Pane width mismatch: expected 400px, got ${width}px`);
-    }
-  }, [state.history.length]);
+    if (typeof window === 'undefined') return undefined;
+    const checkWidth = () => {
+      const firstPane = scrollRef.current?.querySelector('.pane');
+      if (!firstPane) return;
+      const width = firstPane.getBoundingClientRect().width;
+      if (Math.abs(width - 400) > 1) {
+        // eslint-disable-next-line no-console
+        console.warn(`Pane width mismatch: expected 400px, got ${width}px`);
+      }
+    };
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => window.removeEventListener('resize', checkWidth);
+  }, []);
+
+  if (!isReady) {
+    return (
+      <div style={styles.app}>
+        <div style={styles.loading}>Loading navigation…</div>
+      </div>
+    );
+  }
 
   const visibleHistory = useMemo(() => {
     const start = Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1));
@@ -249,7 +323,10 @@ function NavigationShell({ homeId }) {
             const title = doc.title || doc.name || docId;
             const isRightmost = idx === state.currentIndex;
             return (
-              <PaneErrorBoundary key={`pane-${idx}`}>
+              <PaneErrorBoundary
+                key={`pane-${idx}`}
+                resetKey={`${docId}-${idx}-${doc.content ? doc.content.length : 0}`}
+              >
                 <div
                   className="pane"
                   style={styles.pane}
@@ -258,7 +335,10 @@ function NavigationShell({ homeId }) {
                   role={isRightmost ? 'region' : undefined}
                   aria-label={isRightmost ? title : undefined}
                 >
-                  <div style={styles.paneTitle}>Position {idx + 1}: {title}</div>
+                  <div style={styles.paneTitle}>
+                    <span>{title}</span>
+                    <span style={styles.paneMeta}>#{idx + 1} in history</span>
+                  </div>
                   <div className="mock-pdf">[PDF Preview: {title}]</div>
                   <div className="markdown-content">
                     <CompleteMarkdownRenderer content={doc.content} />
@@ -271,9 +351,9 @@ function NavigationShell({ homeId }) {
         </div>
       </div>
 
-      {toast && (
+      {activeToast && (
         <div style={styles.toast} role="status" aria-live="polite">
-          {toast}
+          {activeToast.message}
         </div>
       )}
     </div>
@@ -398,6 +478,12 @@ class PaneErrorBoundary extends React.Component {
     console.warn('Pane rendering error:', error);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -422,6 +508,12 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+  },
+  loading: {
+    textAlign: 'center',
+    color: '#666',
+    fontSize: 16,
+    padding: '32px',
   },
   navBar: {
     display: 'flex',
@@ -468,6 +560,13 @@ const styles = {
     textTransform: 'uppercase',
     color: '#888',
     marginBottom: 12,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+  },
+  paneMeta: {
+    fontSize: 11,
+    color: '#999',
   },
   related: {
     marginTop: 16,

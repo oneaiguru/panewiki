@@ -1,0 +1,375 @@
+<!-- model: sonnet -->
+# Data Model: The Navigable Node
+
+## Core Concept
+
+**Everything is a node.**
+
+Nodes represent "a piece of content" that can be displayed in the 3-pane interface. Each node has two representations: summary (human) and detail (AI).
+
+## Node Structure (TypeScript)
+
+```typescript
+interface NavigableNode {
+  // Identity
+  id: string;                    // kebab-case: "auth-flow"
+  title: string;                 // Sentence case: "Authentication Flow"
+  
+  // Dual Representation (THE CORE PATTERN)
+  summary: {
+    content: string;             // ~30 lines, human-optimized
+    lineCount: number;           // For UI hints
+    estimatedReadTime: number;   // In seconds
+  };
+  
+  detail: {
+    content: string;             // ~100 lines, full context
+    lineCount: number;
+    estimatedReadTime: number;   // In minutes
+  };
+  
+  // Model Attribution
+  modelSource: 'opus' | 'haiku' | 'sonnet' | 'combined';
+  modelMetadata: {
+    opus?: {
+      prompt: string;
+      tokens: number;
+      timestamp: ISO8601;
+    };
+    haiku?: {
+      prompt: string;
+      tokens: number;
+      parallelIndex?: number;    // If parallel calls
+      timestamp: ISO8601;
+    };
+    sonnet?: {
+      prompt: string;
+      tokens: number;
+      timestamp: ISO8601;
+    };
+  };
+  
+  // Navigation Context
+  breadcrumb: string[];          // ["home", "architecture", "data-model"]
+  linkedFrom: string[];          // Nodes that link to this one
+  linkedTo: string[];            // Nodes this links to
+  linkedDetailOnly: string[];    // Links only visible in detail view
+  
+  // Content Classification
+  category: 'concept' | 'guide' | 'reference' | 'use-case';
+  tags: string[];                // ["architecture", "data", "structure"]
+  
+  // Capabilities
+  hasDetailLayer: boolean;       // Can user click "See details"?
+  requiresValidation: boolean;   // Does this need Sonnet review?
+  canParallelize: number;        // How many parallel Haiku calls? (0 = none)
+  
+  // Cost Tracking
+  cost: {
+    opus: number;                // Tokens or cost
+    haiku: number;
+    sonnet: number;
+    total: number;               // Aggregate
+  };
+  
+  // Version & Metadata
+  version: number;               // For updates
+  createdAt: ISO8601;
+  updatedAt: ISO8601;
+  author?: string;               // Human editor or "opus"/"haiku"
+}
+```
+
+## The Dual-Layer Contract
+
+**Rule 1: Summary Always Exists**
+```
+Every node MUST have a summary.
+Summary is ALWAYS the entry point.
+User lands on summary first.
+```
+
+**Rule 2: Detail is Optional**
+```
+Not all nodes need detail.
+If detail exists: Show "See details" link
+If detail doesn't exist: No link shown
+
+Examples:
+✓ Create detail for: Complex topics, multi-step processes
+✗ Skip detail for: Simple definitions, quick references
+```
+
+**Rule 3: Links are Directional**
+```
+If Node A links to Node B:
+  → linkedTo: ["node-b"]
+  
+Node B automatically knows:
+  → linkedFrom: ["node-a"]
+
+Links in detail view only:
+  → linkedDetailOnly: ["node-security-proofs"]
+```
+
+**Rule 4: Model Attribution is Visible**
+```
+Every node shows:
+<!-- model: opus -->
+or
+<!-- model: haiku -->
+or
+<!-- model: opus, haiku -->
+
+Result: Users learn optimal AI patterns
+```
+
+## Practical Examples
+
+### Example 1: Simple Node (No Detail)
+
+```typescript
+const homeNode = {
+  id: "home",
+  title: "Home",
+  
+  summary: {
+    content: "<!-- model: opus -->\n# Welcome\n\n...",
+    lineCount: 30,
+    estimatedReadTime: 5
+  },
+  
+  detail: null,  // No detail needed
+  hasDetailLayer: false,
+  canParallelize: 0,
+  
+  linkedTo: ["vision", "three-pillars"],
+  category: "concept",
+  
+  modelSource: "opus",
+  modelMetadata: {
+    opus: {
+      prompt: "Generate home summary",
+      tokens: 200,
+      timestamp: "2025-11-13T05:00:00Z"
+    }
+  }
+} as NavigableNode;
+
+homeNode.cost = calculateNodeCost(homeNode);
+```
+
+### Example 2: Complex Node (With Detail)
+
+```typescript
+const tokenEconomicsNode = {
+  id: "token-economics",
+  title: "Token Economics: The Math",
+  
+  summary: {
+    content: "<!-- model: sonnet -->\n# Token Economics\n\n...",
+    lineCount: 35,
+    estimatedReadTime: 5
+  },
+  
+  detail: {
+    content: "<!-- model: sonnet -->\n# Token Economics (Full)\n\n...",
+    lineCount: 187,
+    estimatedReadTime: 15
+  },
+  
+  hasDetailLayer: true,  // User can click "See details"
+  canParallelize: 0,
+  
+  linkedTo: ["pillar-3", "implementation"],
+  linkedDetailOnly: ["jwt-math-proofs"],
+  linkedFrom: ["home", "architecture"],
+  
+  category: "reference",
+  tags: ["cost", "efficiency", "economics"],
+  
+  modelSource: "sonnet",
+  modelMetadata: {
+    sonnet: {
+      prompt: "Explain full token economics",
+      tokens: 687,  // 187 summary + 500 detail
+      timestamp: "2025-11-13T05:10:00Z"
+    }
+  }
+} as NavigableNode;
+
+tokenEconomicsNode.cost = calculateNodeCost(tokenEconomicsNode);
+```
+
+### Example 3: Orchestrated Output (Multi-Model)
+
+```typescript
+const authImplementationNode = {
+  id: "auth-implementation",
+  title: "Authentication Implementation",
+  
+  summary: {
+    content: "<!-- model: opus -->\n# Auth: Strategic Layer\n\n...",
+    lineCount: 30,
+    estimatedReadTime: 5
+  },
+  
+  detail: {
+    content: "<!-- model: opus, haiku, sonnet -->\n# Auth (Complete)\n\n...",
+    lineCount: 250,
+    estimatedReadTime: 20
+  },
+  
+  hasDetailLayer: true,
+  canParallelize: 3,  // 3 parallel Haiku calls for examples
+  requiresValidation: true,  // Sonnet reviews examples
+  
+  modelMetadata: {
+    opus: {
+      prompt: "Design auth architecture",
+      tokens: 200,
+      timestamp: "2025-11-13T05:00:00Z"
+    },
+    haiku: {
+      prompt: "Example for component 1",
+      tokens: 1000,
+      parallelIndex: 0
+    },
+    haiku: {
+      prompt: "Example for component 2",
+      tokens: 1000,
+      parallelIndex: 1
+    },
+    haiku: {
+      prompt: "Example for component 3",
+      tokens: 1000,
+      parallelIndex: 2
+    },
+    sonnet: {
+      prompt: "Validate all examples",
+      tokens: 500
+    }
+  },
+  
+  modelSource: "combined"
+} as NavigableNode;
+
+authImplementationNode.cost = calculateNodeCost(authImplementationNode);
+```
+
+## Link Integrity Rules
+
+### Rule 1: Bidirectional Tracking
+
+```typescript
+// If node-a links to node-b:
+nodeA.linkedTo = [..., "node-b"]
+
+// Then node-b MUST know:
+nodeB.linkedFrom = [..., "node-a"]
+
+// This is automatic in the system:
+// When user adds link A → B,
+// System updates B.linkedFrom automatically
+```
+
+### Rule 2: Circular Links are OK
+
+```typescript
+Node A → Pillar 1 → Pillar 2 → Pillar 3 → Architecture → A
+
+This is intentional: users can explore freely.
+Prevents "dead ends" in navigation.
+```
+
+### Rule 3: Detail-Only Links
+
+```typescript
+// Some links only appear in detail view:
+linkedDetailOnly: ["security-proofs", "math-derivations"]
+
+Why? Summary is concise; detail is reference.
+Prevents cluttering summary with advanced topics.
+```
+
+## Rendering in 3-Pane Viewport
+
+```
+When user navigates to a node:
+
+┌──────────────┬──────────────────┬──────────────────┐
+│ Navigation   │ Display          │ Related          │
+│ (sidebar)    │ (center)         │ (right)          │
+├──────────────┼──────────────────┼──────────────────┤
+│ [Node Tree]  │ [Node.summary]   │ [Node.linkedTo]  │
+│              │                  │ [Metadata]       │
+│              │ [See details →]  │ [Model info]     │
+│              │ (if haDetail)    │                  │
+│              │                  │ [Breadcrumb]     │
+└──────────────┴──────────────────┴──────────────────┘
+
+Click "See details" → Shift center pane to [Node.detail]
+```
+
+## Cost Calculation
+
+Every node tracks cost:
+
+```typescript
+// pricing.ts
+export const PRICING = {
+  OPUS_PER_TOKEN_USD:   15 / 1_000_000,
+  HAIKU_PER_TOKEN_USD:  0.80 / 1_000_000,
+  SONNET_PER_TOKEN_USD: 3 / 1_000_000,
+} as const;
+// cost.ts
+import { PRICING } from './pricing';
+
+type NodeCost = {
+  tokens: { opus: number; haiku: number; sonnet: number; total: number };
+  usd:    { opus: number; haiku: number; sonnet: number; total: number };
+};
+
+export function calculateNodeCost(node: NavigableNode): NodeCost {
+  const opusT   = node.modelMetadata.opus?.tokens   ?? 0;
+  const haikuT  = (node.modelMetadata.haiku?.tokens ?? 0) * (node.canParallelize ?? 1);
+  const sonnetT = node.modelMetadata.sonnet?.tokens ?? 0;
+
+  const opusUSD   = opusT   * PRICING.OPUS_PER_TOKEN_USD;
+  const haikuUSD  = haikuT  * PRICING.HAIKU_PER_TOKEN_USD;
+  const sonnetUSD = sonnetT * PRICING.SONNET_PER_TOKEN_USD;
+
+  return {
+    tokens: { opus: opusT, haiku: haikuT, sonnet: sonnetT, total: opusT + haikuT + sonnetT },
+    usd:    { opus: opusUSD, haiku: haikuUSD, sonnet: sonnetUSD, total: opusUSD + haikuUSD + sonnetUSD }
+  };
+}
+```
+
+> Rates align with **Token Economics**: Opus $15/M, Haiku $0.80/M, Sonnet $3/M.
+
+```typescript
+const node = buildNodeFromLLMs();
+node.cost = calculateNodeCost(node);
+
+// Result visible to user:
+// "Generated by Opus ($0.003) + Haiku ($0.001) + Sonnet ($0.0015)"
+```
+
+## System Invariants
+
+```
+✓ Every node has summary
+✓ Every node has unique id
+✓ Summary read time ≤ 10 minutes
+✓ Detail read time ≤ 30 minutes
+✓ Links point to real nodes
+✓ linkedFrom auto-generated (not manual)
+✓ Model attribution always visible
+✓ Cost always tracked
+✓ Breadcrumb accurate and current
+```
+
+---
+
+**Reference:** [Information Flow](information-flow) | **See:** [Model Metadata](../implementation/model-metadata) | **Learn:** [Dual Representation](../three-pillars/pillar-2/pillar-2-dual-representation)

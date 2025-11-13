@@ -55,10 +55,11 @@ function renderMarkdown(content, options = {}) {
 
   const flushList = () => {
     if (!inList || !listItems.length) return;
+    const listKey = keyGen('ul');
     elements.push(
-      <ul key={keyGen('ul')} style={styles.list}>
+      <ul key={listKey} style={styles.list}>
         {listItems.map((text, idx) => (
-          <li key={keyGen(`li-${idx}`)}>{renderInline(text, ctx)}</li>
+          <li key={`${listKey}-li-${idx}`}>{renderInline(text, ctx)}</li>
         ))}
       </ul>
     );
