@@ -10,6 +10,18 @@ Nodes represent "a piece of content" that can be displayed in the 3-pane interfa
 ## Node Structure (TypeScript)
 
 ```typescript
+type ISO8601 = string;
+
+interface ModelMetadataBase {
+  prompt: string;
+  tokens: number;
+  timestamp?: ISO8601;
+}
+
+interface HaikuRunMetadata extends ModelMetadataBase {
+  parallelIndex?: number;        // If parallel calls
+}
+
 interface NavigableNode {
   // Identity
   id: string;                    // kebab-case: "auth-flow"
@@ -19,57 +31,42 @@ interface NavigableNode {
   summary: {
     content: string;             // ~30 lines, human-optimized
     lineCount: number;           // For UI hints
-    estimatedReadTime: number;   // In seconds
+    estimatedReadSeconds: number;// Always seconds for consistency
   };
   
-  detail: {
+  detail?: {
     content: string;             // ~100 lines, full context
     lineCount: number;
-    estimatedReadTime: number;   // In minutes
+    estimatedReadSeconds: number;
   };
   
   // Model Attribution
   modelSource: 'opus' | 'haiku' | 'sonnet' | 'combined';
-  modelMetadata: {
-    opus?: {
-      prompt: string;
-      tokens: number;
-      timestamp: ISO8601;
-    };
-    haiku?: {
-      prompt: string;
-      tokens: number;
-      parallelIndex?: number;    // If parallel calls
-      timestamp: ISO8601;
-    };
-    sonnet?: {
-      prompt: string;
-      tokens: number;
-      timestamp: ISO8601;
-    };
+  modelMetadata?: {
+    opus?: ModelMetadataBase;
+    haikuRuns?: Array<HaikuRunMetadata>;
+    sonnet?: ModelMetadataBase;
   };
   
   // Navigation Context
   breadcrumb: string[];          // ["home", "architecture", "data-model"]
-  linkedFrom: string[];          // Nodes that link to this one
   linkedTo: string[];            // Nodes this links to
-  linkedDetailOnly: string[];    // Links only visible in detail view
+  linkedDetailOnly?: string[];   // Links only visible in detail view
   
   // Content Classification
   category: 'concept' | 'guide' | 'reference' | 'use-case';
-  tags: string[];                // ["architecture", "data", "structure"]
+  tags?: string[];               // ["architecture", "data", "structure"]
   
   // Capabilities
-  hasDetailLayer: boolean;       // Can user click "See details"?
-  requiresValidation: boolean;   // Does this need Sonnet review?
-  canParallelize: number;        // How many parallel Haiku calls? (0 = none)
+  requiresValidation?: boolean;  // Does this need Sonnet review?
+  canParallelize?: number;       // How many parallel Haiku calls? (0 = none)
   
   // Cost Tracking
-  cost: {
-    opus: number;                // Tokens or cost
-    haiku: number;
-    sonnet: number;
-    total: number;               // Aggregate
+  cost?: {
+    opus?: number;               // Tokens or cost
+    haiku?: number;
+    sonnet?: number;
+    total?: number;              // Aggregate
   };
   
   // Version & Metadata
@@ -79,6 +76,10 @@ interface NavigableNode {
   author?: string;               // Human editor or "opus"/"haiku"
 }
 ```
+
+Derived helpers such as `linkedFrom` or “has detail?” are computed by the build step:
+`linkedFrom` comes from the graph index, and the UI simply checks `Boolean(node.detail)`
+when deciding whether to show “See details.” We no longer persist those values on every node.
 
 ## The Dual-Layer Contract
 
@@ -105,8 +106,8 @@ Examples:
 If Node A links to Node B:
   → linkedTo: ["node-b"]
   
-Node B automatically knows:
-  → linkedFrom: ["node-a"]
+The graph layer backfills Node B's inbound view, so UI code can ask:
+  → getLinkedFrom("node-b") → ["node-a"]
 
 Links in detail view only:
   → linkedDetailOnly: ["node-security-proofs"]
@@ -136,11 +137,9 @@ const homeNode = {
   summary: {
     content: "<!-- model: opus -->\n# Welcome\n\n...",
     lineCount: 30,
-    estimatedReadTime: 5
+    estimatedReadSeconds: 300
   },
-  
-  detail: null,  // No detail needed
-  hasDetailLayer: false,
+
   canParallelize: 0,
   
   linkedTo: ["vision", "three-pillars"],
@@ -169,21 +168,19 @@ const tokenEconomicsNode = {
   summary: {
     content: "<!-- model: sonnet -->\n# Token Economics\n\n...",
     lineCount: 35,
-    estimatedReadTime: 5
+    estimatedReadSeconds: 300
   },
   
   detail: {
     content: "<!-- model: sonnet -->\n# Token Economics (Full)\n\n...",
     lineCount: 187,
-    estimatedReadTime: 15
+    estimatedReadSeconds: 900
   },
-  
-  hasDetailLayer: true,  // User can click "See details"
+
   canParallelize: 0,
   
   linkedTo: ["pillar-3", "implementation"],
   linkedDetailOnly: ["jwt-math-proofs"],
-  linkedFrom: ["home", "architecture"],
   
   category: "reference",
   tags: ["cost", "efficiency", "economics"],
@@ -211,16 +208,15 @@ const authImplementationNode = {
   summary: {
     content: "<!-- model: opus -->\n# Auth: Strategic Layer\n\n...",
     lineCount: 30,
-    estimatedReadTime: 5
+    estimatedReadSeconds: 300
   },
   
   detail: {
     content: "<!-- model: opus, haiku, sonnet -->\n# Auth (Complete)\n\n...",
     lineCount: 250,
-    estimatedReadTime: 20
+    estimatedReadSeconds: 1200
   },
-  
-  hasDetailLayer: true,
+
   canParallelize: 3,  // 3 parallel Haiku calls for examples
   requiresValidation: true,  // Sonnet reviews examples
   
@@ -230,21 +226,23 @@ const authImplementationNode = {
       tokens: 200,
       timestamp: "2025-11-13T05:00:00Z"
     },
-    haiku: {
-      prompt: "Example for component 1",
-      tokens: 1000,
-      parallelIndex: 0
-    },
-    haiku: {
-      prompt: "Example for component 2",
-      tokens: 1000,
-      parallelIndex: 1
-    },
-    haiku: {
-      prompt: "Example for component 3",
-      tokens: 1000,
-      parallelIndex: 2
-    },
+    haikuRuns: [
+      {
+        prompt: "Example for component 1",
+        tokens: 1000,
+        parallelIndex: 0
+      },
+      {
+        prompt: "Example for component 2",
+        tokens: 1000,
+        parallelIndex: 1
+      },
+      {
+        prompt: "Example for component 3",
+        tokens: 1000,
+        parallelIndex: 2
+      }
+    ],
     sonnet: {
       prompt: "Validate all examples",
       tokens: 500
@@ -263,14 +261,12 @@ authImplementationNode.cost = calculateNodeCost(authImplementationNode);
 
 ```typescript
 // If node-a links to node-b:
-nodeA.linkedTo = [..., "node-b"]
+nodeA.linkedTo = [..., "node-b"];
 
-// Then node-b MUST know:
-nodeB.linkedFrom = [..., "node-a"]
-
-// This is automatic in the system:
-// When user adds link A → B,
-// System updates B.linkedFrom automatically
+// The build pipeline stores that edge and,
+// at runtime, exposes `linkedFrom(nodeId)`
+// so node-b can render who links to it.
+const inbound = graph.getLinkedFrom("node-b"); // ["node-a"]
 ```
 
 ### Rule 2: Circular Links are OK
@@ -304,7 +300,7 @@ When user navigates to a node:
 │ [Node Tree]  │ [Node.summary]   │ [Node.linkedTo]  │
 │              │                  │ [Metadata]       │
 │              │ [See details →]  │ [Model info]     │
-│              │ (if haDetail)    │                  │
+│              │ (if detail)      │                  │
 │              │                  │ [Breadcrumb]     │
 └──────────────┴──────────────────┴──────────────────┘
 
@@ -331,9 +327,10 @@ type NodeCost = {
 };
 
 export function calculateNodeCost(node: NavigableNode): NodeCost {
-  const opusT   = node.modelMetadata.opus?.tokens   ?? 0;
-  const haikuT  = (node.modelMetadata.haiku?.tokens ?? 0) * (node.canParallelize ?? 1);
-  const sonnetT = node.modelMetadata.sonnet?.tokens ?? 0;
+  const opusT   = node.modelMetadata?.opus?.tokens   ?? 0;
+  const haikuRuns = node.modelMetadata?.haikuRuns ?? [];
+  const haikuT  = haikuRuns.reduce((sum, run) => sum + run.tokens, 0);
+  const sonnetT = node.modelMetadata?.sonnet?.tokens ?? 0;
 
   const opusUSD   = opusT   * PRICING.OPUS_PER_TOKEN_USD;
   const haikuUSD  = haikuT  * PRICING.HAIKU_PER_TOKEN_USD;
