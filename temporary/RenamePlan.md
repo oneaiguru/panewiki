@@ -16,9 +16,9 @@ Mapping
 
 - Summary: `ADR001HistoryBasedNavigation.md`
   - Full: `ADR-001 History Based Navigation.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes (from any full doc that currently links `ADR001HistoryBasedNavigation`)
+  - Present?: Yes
+  - Rename needed?: Done (source from Downloads used spaced naming)
+  - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR002AppendOnlyHistory.md`
   - Full: `ADR-002 Append Only History.md`
