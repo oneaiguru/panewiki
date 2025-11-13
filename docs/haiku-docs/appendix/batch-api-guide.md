@@ -8,6 +8,7 @@ readTime: 5m
 
 <!-- model: sonnet -->
 > **Path:** Home › Appendix › Batch API
+> **Validation:** Reviewed by Sonnet ✓
 
 # Batch API: 50% Cost Savings
 
@@ -36,22 +37,22 @@ Asynchronous request processing. Send multiple queries at once, get results late
 
 ## Cost Comparison: Auth System Example
 
-**Standard (real-time):**
+**Standard (real-time)** *(rates from [Pricing](pricing))*:
 ```
-Opus:   200 tokens = $0.003
-Haiku:  3000 tokens = $0.003
-Sonnet: 500 tokens = $0.0015
-────────────────────
-Total = $0.0075
+Opus (input):   200 tok × $15/M  = $0.0030
+Haiku (output): 3000 tok × $5/M  = $0.0150
+Sonnet (output): 500 tok × $15/M = $0.0075
+────────────────────────────────
+Total (real-time) = $0.0255
 ```
 
 **Batch API (50% discount):**
 ```
-Opus:   200 × 0.5 = $0.0015
-Haiku:  3000 × 0.5 = $0.0015
-Sonnet: 500 × 0.5 = $0.00075
-────────────────────
-Total = $0.00375 (50% less)
+Opus (input):    $0.0030 → $0.0015
+Haiku (output):  $0.0150 → $0.0075
+Sonnet (output): $0.0075 → $0.00375
+────────────────────────
+Total (batch) = $0.01275  (≈50% less)
 ```
 
 ## Latency Trade-off
@@ -95,5 +96,7 @@ const results = await anthropic.beta.messages.batches.retrieve(
 See [Token Economics](../architecture/token-economics) for more cost optimization strategies.
 
 ---
-
-**Related:** [Token Economics](../architecture/token-economics) | [Pricing Appendix](pricing)
+**Related**
+- [Next: Pricing](pricing)
+- [See also: Token Economics](../architecture/token-economics)
+- [Back: Index](../INDEX)

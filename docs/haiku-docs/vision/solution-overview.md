@@ -8,6 +8,7 @@ readTime: 3m
 
 <!-- model: opus -->
 > **Path:** Home › Vision › Solution Overview
+> **Validation:** Reviewed by Sonnet ✓
 
 # The Solution: Three Columns
 
@@ -25,9 +26,11 @@ Do this: "Here's essence (100 tokens) → Click for details"
 ┌─────────┬─────────┬─────────┐
 │ Opus    │ Haiku   │ Sonnet  │
 │ THINK   │ EXECUTE │ VERIFY  │
-│ $15/M   │ $1/M    │ $3/M    │
+│ Premium │ Low-cost│ Mid-tier│
 └─────────┴─────────┴─────────┘
 ```
+
+Rates: see [Pricing](../../appendix/pricing) for the live input/output costs.
 
 **Each model does what it's best at:**
 - Opus: Strategic thinking (expensive, brief)
@@ -39,11 +42,11 @@ Do this: "Here's essence (100 tokens) → Click for details"
 See [Token Economics](../../architecture/token-economics) for full calculations.
 
 **Traditional:** All-Opus workflow
-- Cost: $0.06 per design task
+- Cost: $0.30 per design task (scenario in [Pricing](../../appendix/pricing))
 
 **3-Column:** Orchestrated workflow
-- Cost: $0.0075 per design task
-- **Savings: 87.5% cheaper**
+- Cost: ≈$0.055 per design task
+- **Savings: ≈81% cheaper**
 
 Same or better quality, 1/8 the cost.
 
@@ -58,5 +61,7 @@ Same or better quality, 1/8 the cost.
 **Result:** Educated users, better outcomes.
 
 ---
-
-**Related:** [Problem Statement](problem-statement) | [Learn Details](../../home-detail)
+**Related**
+- [Next: Pillar 1 Summary](../three-pillars/pillar-1/pillar-1-column-output)
+- [See also: Problem Statement](problem-statement)
+- [Back: Home](../home)

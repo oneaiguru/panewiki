@@ -1,4 +1,15 @@
+---
+id: home
+title: "Home: 3-Column Interface"
+models: [opus]
+summary: true
+readTime: 5m
+---
+
 <!-- model: opus -->
+> **Path:** Home
+> **Validation:** Reviewed by Sonnet ✓
+
 # The 3-Column Interface for AI
 
 ## The Problem
@@ -38,4 +49,8 @@ Opus thinks → Haiku illustrates (parallel) → Sonnet validates. Token-efficie
 
 ---
 
-**Next**: [Vision Overview](vision) | **See**: [Architecture](architecture) | **Try**: [Use Cases](use-cases)
+---
+**Related**
+- [Next: Vision Overview](vision/vision)
+- [See also: System Reference](SYSTEM)
+- [Back: Index](INDEX)

@@ -1,4 +1,15 @@
+---
+id: use-case-debugging
+title: "Use Case: Debugging Workflow"
+models: [haiku]
+summary: true
+readTime: 6m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Use Cases › Debugging
+> **Validation:** Reviewed by Sonnet ✓
+
 # Use Case: Debugging Workflow
 
 ## The Scenario
@@ -10,33 +21,9 @@ User: "API returns 500 error on login endpoint"
 
 ## 3-Pane Debug Flow
 
-```
-┌──────────────┬────────────────┬──────────────┐
-│ HYPOTHESIS   │ INVESTIGATION  │ VALIDATION   │
-│ (Opus)       │ (Haiku)        │ (Sonnet)     │
-├──────────────┼────────────────┼──────────────┤
-│ 3 likely     │ Check #1:      │ ✓ Database   │
-│ causes:      │ Database       │ connection   │
-│              │ • Connection   │ is the issue │
-│ 1. Database  │   string       │              │
-│    offline   │ • Query        │ Fix:         │
-│              │   syntax       │ Add retry    │
-│ 2. Auth      │ • Timeout      │ logic        │
-│    token     │                │ (line 42)    │
-│    expired   │ Check #2:      │              │
-│              │ Auth token     │ Time: 5 min  │
-│ 3. Rate      │ • Expiration   │ to implement │
-│    limit     │ • Validation   │              │
-│              │                │ Cost: $0.001 │
-│ Cost: $0.003 │ Check #3:      │              │
-│              │ Rate limiting  │              │
-│              │ • Request count│              │
-│              │ • Time window  │              │
-│              │                │              │
-│              │ Cost: $0.001   │              │
-│              │ each           │              │
-└──────────────┴────────────────┴──────────────┘
-```
+- **Hypothesis (Opus):** Suggests top causes (database offline, expired tokens, rate limiting). Cost ≈$0.003.
+- **Investigation (Haiku):** Runs targeted checks for each hypothesis (connection strings, token expiry, throttling). ≈$0.005 per test.
+- **Validation (Sonnet):** Confirms root cause, prescribes fix, shares effort estimate. ≈$0.0075.
 
 ## Workflow
 
@@ -52,5 +39,7 @@ User: "API returns 500 error on login endpoint"
 - Implementation: clear next steps
 
 ---
-
-**Compare:** [Code Review](code-review.md) | **Learn:** [Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration.md)
+**Related**
+- [Next: Learning Use Case](learning)
+- [See also: Model Orchestration](../three-pillars/pillar-3/pillar-3-model-orchestration)
+- [Back: Home](../home)

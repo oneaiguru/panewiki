@@ -1,4 +1,15 @@
+---
+id: pillar-3-model-orchestration
+title: "Pillar 3: Model Orchestration"
+models: [opus]
+summary: true
+readTime: 6m
+---
+
 <!-- model: opus -->
+> **Path:** Home › Three Pillars › Pillar 3
+> **Validation:** Reviewed by Sonnet ✓
+
 # Pillar 3: Model Orchestration
 
 ## Three Models, Three Roles
@@ -10,8 +21,10 @@
 ├─────────┼──────────┼─────────┤
 │ Strategy│ Examples │ Reviews │
 │ Essence │ Parallel │ Quality │
-│ $15/M   │ $0.25/M  │ $3/M    │
+│ Premium │ Low-cost │ Mid-tier│
 └─────────┴──────────┴─────────┘
+
+Rates: see [Pricing](../../appendix/pricing).
 ```
 
 ## The Workflow
@@ -25,13 +38,13 @@
 
 **3. Haiku (Parallel)**
 → 4 parallel calls, each illustrates one layer
-   (4 × 1000 tokens, ~$0.001 each)
+   (4 × 1K output tokens, ≈$0.005 each)
 
 **4. Sonnet (Review)**
 → "Validates all 4 outputs, finds gaps"
-   (500 tokens, ~$0.0015)
+   (500 output tokens, ≈$0.0075)
 
-**Total:** ~$0.019 vs $0.15+ for all-Opus
+**Total:** ≈$0.0255 vs ≈$0.30 for all-Opus
 
 ## Why This Works
 
@@ -46,5 +59,7 @@
 - Sees Sonnet review (quality assurance)
 
 ---
-
-**Learn:** [Opus Role](opus-role-essence.md) | **Explore:** [Haiku Illustration](haiku-role-illustration.md) | **Review:** [Sonnet Validation](sonnet-role-review.md)
+**Related**
+- [Next: Opus Role](opus-role-essence)
+- [See also: Pillar 3 Detail](pillar-3-detail)
+- [Back: Pillar 2 Detail](../pillar-2/pillar-2-detail)

@@ -1,4 +1,15 @@
+---
+id: pillar-1-column-output
+title: "Pillar 1: Column Output Format"
+models: [haiku]
+summary: true
+readTime: 5m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Three Pillars › Pillar 1
+> **Validation:** Reviewed by Sonnet ✓
+
 # Pillar 1: Column Output Format
 
 ## The 400px Rule
@@ -55,5 +66,7 @@ ASCII art only. Diagrams fit column:
 ```
 
 ---
-
-**Explore:** [400px Width Math](pillar-1-detail.md) | **Next:** [Pillar 2: Dual Representation](../pillar-2/pillar-2-dual-representation.md)
+**Related**
+- [Next: Pillar 2 Summary](../pillar-2/pillar-2-dual-representation)
+- [See also: Pillar 1 Detail](pillar-1-detail)
+- [Back: Home](../../home)

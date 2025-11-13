@@ -1,4 +1,15 @@
+---
+id: pillar-2-detail
+title: "Pillar 2: Dual Representation (Detail)"
+models: [opus, haiku]
+summary: false
+readTime: 15m
+---
+
 <!-- model: opus, haiku -->
+> **Path:** Home › Three Pillars › Pillar 2 › Detail
+> **Validation:** Reviewed by Sonnet ✓
+
 # Pillar 2: Dual Representation (Full Context)
 
 ## The Cognitive Science
@@ -268,5 +279,7 @@ Each node tracks:
 6. Done (100 lines)
 
 ---
-
-**Next:** [Pillar 3: Model Orchestration](../pillar-3-model-orchestration) | **Back:** [Pillar 1: Columns](../pillar-1-column-output) | **Home:** [Start](../../home)
+**Related**
+- [Next: Pillar 3 Summary](../pillar-3/pillar-3-model-orchestration)
+- [See also: Pillar 2 Summary](pillar-2-dual-representation)
+- [Back: Home](../../home)

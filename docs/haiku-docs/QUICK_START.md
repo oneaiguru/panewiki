@@ -1,3 +1,15 @@
+---
+id: quick-start
+title: "Quick Start Guide"
+models: [opus]
+summary: true
+readTime: 6m
+---
+
+<!-- model: opus -->
+> **Path:** Home › Quick Start
+> **Validation:** Reviewed by Sonnet ✓
+
 # 🚀 Quick Start Guide
 
 ## What You Got
@@ -10,25 +22,24 @@ A **complete documentation system** that demonstrates the 3-column UI paradigm f
 
 ## Three Fast Paths
 
-### ⚡ Path 1: See It In 5 Minutes (Everyone)
+### ⚡ Path 1: See It in 5 Minutes (Everyone)
 
-1. Open: [`haiku-docs/home.md`](haiku-docs/home.md)
+1. Open [Home](home)
 2. Read the 30-line summary
-3. Understand the core idea: Columns + layers + orchestration
+3. Glance at the [Index](INDEX) to choose your role
 
-### 🔍 Path 2: Understand It In 30 Minutes (Users)
+### 🔍 Path 2: Understand It in 13 Minutes (Users)
 
-1. [`haiku-docs/INDEX.md`](haiku-docs/INDEX.md) — Pick your role
-2. [`haiku-docs/home.md`](haiku-docs/home.md) — Core concept
-3. [`haiku-docs/use-cases/code-review.md`](haiku-docs/use-cases/code-review.md) — See it in action
-4. [`haiku-docs/three-pillars/`](haiku-docs/three-pillars/) — Explore the three pillars
+1. [Home](home) — Core concept (5 min)
+2. [Code Review](use-cases/code-review) — Workflow in action (5 min)
+3. [Why This Matters](vision/vision) — Paradigm shift (3 min)
 
-### 🏗️ Path 3: Implement It In 1 Hour (Developers)
+### 🏗️ Path 3: Implement It in 45 Minutes (Developers)
 
-1. [`haiku-docs/implementation/extending-current-system.md`](haiku-docs/implementation/extending-current-system.md) — Integration points
-2. [`haiku-docs/three-pillars/pillar-3/pillar-3-detail.md`](haiku-docs/three-pillars/pillar-3/pillar-3-detail.md) — Prompt patterns (copy-paste ready)
-3. [`haiku-docs/architecture/data-model.md`](haiku-docs/architecture/data-model.md) — Data structure
-4. [`haiku-docs/architecture/token-economics.md`](haiku-docs/architecture/token-economics.md) — Cost math
+1. [Home Detail](home-detail) — Full strategy (15 min)
+2. [Data Model](architecture/data-model) — Structure (10 min)
+3. [Extending the System](implementation/extending-current-system) — Integration (10 min)
+4. [Prompt Patterns](implementation/prompt-patterns) — Orchestration details (10 min)
 
 ---
 
@@ -47,28 +58,28 @@ A **complete documentation system** that demonstrates the 3-column UI paradigm f
 - Navigation between layers
 
 **Pillar 3: Model Orchestration**
-- Opus: Strategic thinking ($15/M tokens)
-- Haiku: Parallel execution ($0.80/M tokens)  
-- Sonnet: Review & validation ($3/M tokens)
-- Result: 87% cost savings + better quality
+- Opus: Strategic thinking (premium, see [Pricing](appendix/pricing))
+- Haiku: Parallel execution (low-cost output, see [Pricing](appendix/pricing))  
+- Sonnet: Review & validation (mid-tier, see [Pricing](appendix/pricing))
+- Result: ≈81% cost savings with orchestration
 
 ### 🎯 Key Documents
 
 | Document | Time | Purpose |
 |----------|------|---------|
-| home.md | 5 min | Core concept |
-| home-detail.md | 15 min | Full context |
-| vision/vision.md | 3 min | Why this matters |
-| pillar-1-detail.md | 15 min | Column science |
-| pillar-2-detail.md | 15 min | Dual representation |
-| pillar-3-detail.md | 20 min | Model orchestration |
-| token-economics.md | 10 min | Cost breakdown |
-| code-review.md | 10 min | Practical workflow |
-| implementation/* | 20 min | Build it yourself |
+| [home](home) | 5 min | Core concept |
+| [home-detail](home-detail) | 15 min | Full context |
+| [vision](vision/vision) | 3 min | Why this matters |
+| [pillar-1-detail](three-pillars/pillar-1/pillar-1-detail) | 15 min | Column science |
+| [pillar-2-detail](three-pillars/pillar-2/pillar-2-detail) | 15 min | Dual representation |
+| [pillar-3-detail](three-pillars/pillar-3/pillar-3-detail) | 20 min | Model orchestration |
+| [token-economics](architecture/token-economics) | 10 min | Cost breakdown |
+| [code-review](use-cases/code-review) | 10 min | Practical workflow |
+| [implementation](implementation/extending-current-system) | 20 min | Build it yourself |
 
 ### 📊 Metrics
 
-- **Cost reduction**: 87% ($0.06 → $0.0075 per task)
+- **Cost reduction**: ≈81% ($0.30 → ≈$0.055 per task, see [Pricing](appendix/pricing))
 - **Time reduction**: 65% (40 min review → 14 min)
 - **Engagement**: 8× (users see more, understand better)
 - **Total documents**: 15 core × 2 layers = 30 readable documents
@@ -78,30 +89,14 @@ A **complete documentation system** that demonstrates the 3-column UI paradigm f
 
 ## File Organization
 
-```
-haiku-docs/
-├── INDEX.md ........................ START HERE (navigation hub)
-├── SYSTEM.md ....................... Visual reference
-├── home.md + home-detail.md ........ Gateway docs (dual-layer)
-│
-├── vision/
-│   └── vision.md ................... Why this paradigm
-│
-├── three-pillars/
-│   ├── pillar-1/ (2 docs) ......... Column format
-│   ├── pillar-2/ (2 docs) ......... Dual representation  
-│   └── pillar-3/ (2 docs) ......... Model orchestration
-│
-├── architecture/ (2 docs)
-│   ├── information-flow.md ......... How data moves
-│   └── token-economics.md .......... Cost math
-│
-├── implementation/ (1 doc)
-│   └── extending-current-system.md . Integration guide
-│
-└── use-cases/ (1 doc)
-    └── code-review.md .............. Real workflow example
-```
+- INDEX — Navigation hub  
+- SYSTEM — Visual reference  
+- home + home-detail — Gateway docs  
+- vision — Paradigm story  
+- Pillars — Column format, dual representation, orchestration  
+- Architecture — information-flow, token-economics  
+- Implementation — extending-current-system, conventions, metadata, prompt patterns  
+- Use cases — code review, research, debugging, learning  
 
 ---
 
@@ -117,7 +112,7 @@ haiku-docs/
 **Result:**
 - ✓ Readable (newspaper columns work)
 - ✓ Layered (summary first, detail on demand)
-- ✓ Efficient (87% cheaper than all-Opus)
+- ✓ Efficient (≈81% cheaper than all-Opus, see [Pricing](appendix/pricing))
 - ✓ Transparent (you see who did what)
 
 ---
@@ -125,14 +120,14 @@ haiku-docs/
 ## Next Actions
 
 ### 1. Start Reading (Choose One)
-- [ ] 5 min: `home.md` 
-- [ ] 30 min: Follow the "Users" path in `INDEX.md`
-- [ ] 1 hour: Deep dive all three pillars
+- [ ] 5 min: [home](home)
+- [ ] 13 min: Follow the "Users" path in [INDEX](INDEX)
+- [ ] 45 min: Follow the "Developers" path in [INDEX](INDEX)
 
 ### 2. Understand Implementation (For Builders)
-- [ ] Study `pillar-3-detail.md` for prompt patterns
-- [ ] Copy data model from `architecture/data-model.md`
-- [ ] Review `implementation/extending-current-system.md`
+- [ ] Study [pillar-3-detail](three-pillars/pillar-3/pillar-3-detail) for prompt patterns
+- [ ] Copy data model from [architecture/data-model](architecture/data-model)
+- [ ] Review [implementation/extending-current-system](implementation/extending-current-system)
 
 ### 3. Apply To Your Project
 - [ ] Create dual-layer docs for your system
@@ -141,8 +136,8 @@ haiku-docs/
 
 ### 4. Share With Your Team
 - [ ] Send them this Quick Start
-- [ ] Have them read `home.md` (5 min)
-- [ ] Walk through `use-cases/code-review.md` together
+- [ ] Have them read [home](home) (5 min)
+- [ ] Walk through [use-cases/code-review](use-cases/code-review) together
 
 ---
 
@@ -178,12 +173,12 @@ haiku-docs/
 
 Each document answers different questions:
 
-- **"What is this?"** → `home.md`
-- **"How does it work?"** → `home-detail.md`
-- **"Why should I care?"** → `vision/vision.md`
-- **"How do I implement?"** → `implementation/`
-- **"What are the benefits?"** → `architecture/token-economics.md`
-- **"Show me an example"** → `use-cases/code-review.md`
+- **"What is this?"** → [home](home)
+- **"How does it work?"** → [home-detail](home-detail)
+- **"Why should I care?"** → [vision](vision/vision)
+- **"How do I implement?"** → [implementation](implementation/extending-current-system)
+- **"What are the benefits?"** → [token economics](architecture/token-economics)
+- **"Show me an example"** → [code review](use-cases/code-review)
 
 ---
 
@@ -207,16 +202,22 @@ You learn by doing.
 **Ready to dive in?**
 
 ### ⏰ **5 minutes?** 
-Open [`haiku-docs/home.md`](haiku-docs/home.md) now.
+Open [home](home) now.
 
-### 🎯 **30 minutes?**
-Follow your path in [`haiku-docs/INDEX.md`](haiku-docs/INDEX.md).
+### 🎯 **13 minutes?**
+Follow the "Users" path in [INDEX](INDEX).
 
-### 🏗️ **1 hour?**
-Read all three pillars: [`pillar-1/`](haiku-docs/three-pillars/pillar-1/) → [`pillar-2/`](haiku-docs/three-pillars/pillar-2/) → [`pillar-3/`](haiku-docs/three-pillars/pillar-3/)
+### 🏗️ **45 minutes?**
+Read the full developer path: [Pillar 1](three-pillars/pillar-1/pillar-1-column-output) → [Pillar 2](three-pillars/pillar-2/pillar-2-dual-representation) → [Pillar 3](three-pillars/pillar-3/pillar-3-detail)
 
 ---
 
 **All files are in:** `/haiku-docs/`
 
-Start with: `INDEX.md` or `home.md`
+Start with: `INDEX` or `home`
+
+---
+**Related**
+- [Next: Index](INDEX)
+- [See also: System Reference](SYSTEM)
+- [Back: Home](home)

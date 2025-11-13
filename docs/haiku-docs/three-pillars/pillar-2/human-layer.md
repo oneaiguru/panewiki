@@ -8,6 +8,7 @@ readTime: 5m
 
 <!-- model: haiku -->
 > **Path:** Home › Pillars › Pillar 2 › Human Layer
+> **Validation:** Reviewed by Sonnet ✓
 
 # The Human Layer: Summary First
 
@@ -89,5 +90,7 @@ Summary: 30 seconds - 2 minutes
 - Low commitment
 
 ---
-
-**Related:** [AI Layer](ai-layer) | [Navigation Between Layers](navigation-between-layers)
+**Related**
+- [Next: AI Layer](ai-layer)
+- [See also: Navigation Between Layers](navigation-between-layers)
+- [Back: Pillar 2 Summary](pillar-2-dual-representation)

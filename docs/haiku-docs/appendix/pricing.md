@@ -8,6 +8,7 @@ readTime: 3m
 
 <!-- model: sonnet -->
 > **Path:** Home › Appendix › Pricing
+> **Validation:** Reviewed by Sonnet ✓
 
 # Current Model Pricing
 
@@ -22,34 +23,35 @@ readTime: 3m
 | **Sonnet 4.5** | $3 | $15 | Mid-tier reasoning |
 | **Opus 4.1** | $15 | $75 | Strategic thinking |
 
-## Cost Per Task (Standard)
+## Cost Per Task (Scenario A: Real-time Orchestrated)
 
-**Design auth system:**
+**Design auth system (Opus plan → Haiku examples → Sonnet validation):**
 ```
-Opus:   200 input = $0.003
-Haiku:  3000 output = $0.015
+Opus:   200 input = $0.0030
+Haiku:  3000 output = $0.0150
 Sonnet: 500 output = $0.0075
-─────────────────
-Total = $0.0255 (average mixed)
+─────────────────────────────
+Total = $0.0255 (mixed models)
 ```
 
-**Orchestrated (Opus→Haiku→Sonnet):**
+## Scenario B: Batch API (50% Discount)
+
+Applying Batch API to the exact workload above:
 ```
-Opus:   200 = $0.003
-Haiku:  3000 = $0.0015
-Sonnet: 500 = $0.00075
-─────────────────
-Total = $0.00525 (optimized)
+Opus:   $0.0030 → $0.0015
+Haiku:  $0.0150 → $0.0075
+Sonnet: $0.0075 → $0.00375
+──────────────────────────
+Total = $0.01275 (≈50% less)
 ```
+
+## Scenario C: Batch + Short Outputs (Optional)
+
+If Haiku/Sonnet responses are trimmed to a few hundred tokens each, the workflow can drop toward **$0.00525**. Call out the smaller token counts when sharing this hero number to avoid confusion.
 
 ## Batch API Discount
 
-All rates: **50% off** when using Batch API
-
-```
-Real-time: $0.00525
-Batch:     $0.002625 (50% less)
-```
+All rates: **50% off** when using Batch API. Use it for asynchronous jobs that can wait ~24 hours.
 
 ## Premium Features
 
@@ -88,5 +90,7 @@ Anthropic updates pricing quarterly. Check:
 For local documentation, update this appendix when prices change.
 
 ---
-
-**Related:** [Token Economics](../architecture/token-economics) | [Batch API Guide](batch-api-guide)
+**Related**
+- [Next: Batch API Guide](batch-api-guide)
+- [See also: Token Economics](../architecture/token-economics)
+- [Back: Index](../INDEX)
