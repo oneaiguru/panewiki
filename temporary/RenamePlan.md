@@ -22,9 +22,9 @@ Mapping
 
 - Summary: `ADR002AppendOnlyHistory.md`
   - Full: `ADR-002 Append Only History.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes
+  - Present?: Yes
+  - Rename needed?: Done (source from Downloads used spaced naming)
+  - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR003FixedThreePaneViewport.md`
   - Full: `ADR-003 Fixed Three Pane Viewport.md`
