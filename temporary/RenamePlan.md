@@ -34,9 +34,9 @@ Mapping
 
 - Summary: `ADR004ComputedScrollPosition.md`
   - Full: `ADR-004 Computed Scroll Position.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes
+  - Present?: Yes
+  - Rename needed?: Done (spaced naming)
+  - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR005ReactHooksState.md`
   - Full: `ADR-005 React Hooks State.md`
