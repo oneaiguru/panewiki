@@ -40,9 +40,9 @@ Mapping
 
 - Summary: `ADR005ReactHooksState.md`
   - Full: `ADR-005 React Hooks State.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes
+  - Present?: Yes
+  - Rename needed?: Done (spaced naming)
+  - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR006MockPDFsNotRealRendering.md`
   - Full: `ADR-006 Mock PDFs Not Real Rendering.md`
@@ -58,9 +58,9 @@ Mapping
 
 - Summary: `ADR008PureStatelessRenderer.md`
   - Full: `ADR-008 Pure Stateless Renderer.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes
+  - Present?: Yes
+  - Rename needed?: Done (created from conversation log)
+  - Link updates?: N/A (links point to existing full documents)
 
 - Summary: `ConstraintsAndAssumptions.md`
   - Full: `Constraints and Assumptions.md`
