@@ -191,6 +191,9 @@ function RelatedLinks({ node, onClick, highlightFirst }) {
                   ...styles.relatedButton,
                   ...(highlightFirst && idx === 0 ? styles.keyboardHint : {}),
                 }}
+                {...(highlightFirst && idx === 0
+                  ? { 'aria-label': `Navigate to ${target?.title ?? linkId}` }
+                  : {})}
               >
                 {target?.title ?? linkId}
                 {highlightFirst && idx === 0 && <span style={styles.hintIcon}>→</span>}
@@ -273,6 +276,7 @@ const styles = {
     overflowX: 'auto',
     paddingBottom: 4,
     maxWidth: 600,
+    whiteSpace: 'nowrap',
   },
   jumpButton: {
     border: 'none',

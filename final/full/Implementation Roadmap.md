@@ -225,7 +225,7 @@ App
   - [ ] Markdown styling
 - [ ] Create components/RelatedDiagrams.jsx with:
   - [ ] Renders ul > li > button for each link
-  - [ ] onClick calls onClickLink(targetId) (links array is the navigation source of truth; inline markdown links remain informational)
+  - [ ] onClick calls onClickLink(targetId) (the `links[]` array is the navigation source of truth; inline markdown links remain informational text)
   - [ ] Shows document titles (not IDs) and highlights the first link in the rightmost pane to mirror the ArrowRight shortcut
 - [ ] Update App.jsx to render PaneStrip inside ScrollContainer
 
