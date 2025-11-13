@@ -7,66 +7,138 @@ const MAX_FIRST_JUMP_BUTTONS = 5;
 const MAX_LAST_JUMP_BUTTONS = 5;
 const HISTORY_WARNING_THRESHOLD = 100;
 
-const initialState = {
-  history: [START_DOC_ID],
-  currentIndex: 0,
+const ACTIONS = {
+  NAVIGATE: 'NAVIGATE',
+  BACK: 'BACK',
+  HOME: 'HOME',
+  JUMP: 'JUMP',
+  RESET_HOME: 'RESET_HOME',
+  CLEAR_KEEP_CURRENT: 'CLEAR_KEEP_CURRENT',
+};
+
+const JUMP_BUTTON_STYLES = {
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+  },
+  scroll: {
+    display: 'flex',
+    gap: 8,
+    overflowX: 'auto',
+    maxWidth: 600,
+    padding: '4px 0',
+  },
+  button: {
+    padding: '4px 8px',
+    border: '1px solid #ccc',
+    background: '#fff',
+    borderRadius: 4,
+    fontSize: 12,
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+  },
+  gap: {
+    color: '#666',
+    fontSize: 12,
+  },
 };
 
 function navigationReducer(state, action) {
   switch (action.type) {
-    case 'NAVIGATE': {
-      const nextHistory = [...state.history.slice(0, state.currentIndex + 1), action.id];
+    case ACTIONS.NAVIGATE: {
+      const nextHistory = [...state.history, action.id];
       return { history: nextHistory, currentIndex: nextHistory.length - 1 };
     }
-    case 'BACK':
+    case ACTIONS.BACK:
       return state.currentIndex > 0 ? { ...state, currentIndex: state.currentIndex - 1 } : state;
-    case 'HOME':
+    case ACTIONS.HOME:
       return { ...state, currentIndex: 0 };
-    case 'JUMP':
-      return { ...state, currentIndex: action.index };
-    case 'RESET_HOME':
-      return { history: [START_DOC_ID], currentIndex: 0 };
+    case ACTIONS.JUMP: {
+      const idx = Math.max(0, Math.min(action.index, state.history.length - 1));
+      return { ...state, currentIndex: idx };
+    }
+    case ACTIONS.RESET_HOME:
+      return { history: [action.homeId], currentIndex: 0 };
+    case ACTIONS.CLEAR_KEEP_CURRENT: {
+      const currentId = state.history[state.currentIndex];
+      return { history: [currentId], currentIndex: 0 };
+    }
     default:
       return state;
   }
 }
 
 export default function V1NavigationPrototype() {
-  const [state, dispatch] = useReducer(navigationReducer, initialState);
+  const homeDoc = DOCS[START_DOC_ID];
+
+  if (!homeDoc) {
+    return (
+      <div style={styles.app}>
+        <div style={styles.errorPane}>
+          <h2>Home document "{START_DOC_ID}" not found.</h2>
+          <p>Available documents: {Object.keys(DOCS).join(', ') || 'none'}.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <NavigationShell homeId={START_DOC_ID} />;
+}
+
+function NavigationShell({ homeId }) {
+  const initializer = () => ({
+    history: [homeId],
+    currentIndex: 0,
+  });
+  const [state, dispatch] = useReducer(navigationReducer, undefined, initializer);
   const stateRef = useRef(state);
   const scrollRef = useRef(null);
+  const currentPaneRef = useRef(null);
+  const toastTimerRef = useRef(null);
   const [toast, setToast] = useState('');
-  const toastTimeoutRef = useRef(null);
 
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
 
-  useEffect(() => () => toastTimeoutRef.current && clearTimeout(toastTimeoutRef.current), []);
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
 
   const showToast = (message) => {
     setToast(message);
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    toastTimeoutRef.current = setTimeout(() => setToast(''), 2000);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToast(''), 2000);
   };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      const activeTag = document.activeElement?.tagName?.toLowerCase();
+      const isTyping =
+        activeTag === 'input' ||
+        activeTag === 'textarea' ||
+        document.activeElement?.isContentEditable;
+      if (isTyping) return;
+
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        dispatch({ type: 'BACK' });
+        dispatch({ type: ACTIONS.BACK });
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         navigateForwardFrom(stateRef.current, dispatch, showToast);
       } else if (e.key === 'Home') {
         e.preventDefault();
-        dispatch({ type: 'HOME' });
+        dispatch({ type: ACTIONS.HOME });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -74,58 +146,124 @@ export default function V1NavigationPrototype() {
     const prefersReduced =
       typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     el.scrollTo({
-      left: Math.max(0, (state.currentIndex - 2) * 400),
+      left: Math.max(0, (state.currentIndex - (MAX_VISIBLE_PANES - 1)) * 400),
       behavior: prefersReduced ? 'auto' : 'smooth',
     });
   }, [state.currentIndex]);
+
+  useEffect(() => {
+    if (currentPaneRef.current) {
+      currentPaneRef.current.focus();
+    }
+  }, [state.currentIndex]);
+
+  useEffect(() => {
+    const firstPane = scrollRef.current?.querySelector('.pane');
+    if (!firstPane) return;
+    const width = firstPane.getBoundingClientRect().width;
+    if (Math.abs(width - 400) > 1) {
+      // eslint-disable-next-line no-console
+      console.warn(`Pane width mismatch: expected 400px, got ${width}px`);
+    }
+  }, [state.history.length]);
 
   const visibleHistory = useMemo(() => {
     const start = Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1));
     return state.history.slice(start, state.currentIndex + 1);
   }, [state.history, state.currentIndex]);
 
-  const hiddenAncestors = state.history.slice(0, Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1)));
+  const hiddenAncestors = state.history.slice(
+    0,
+    Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1))
+  );
+  const showHistoryWarning = state.history.length > HISTORY_WARNING_THRESHOLD;
 
   const handleLinkClick = (targetId) => {
     if (!DOCS[targetId]) {
       showToast(`Cannot navigate to "${targetId}"`);
       return;
     }
-    dispatch({ type: 'NAVIGATE', id: targetId });
+    dispatch({ type: ACTIONS.NAVIGATE, id: targetId });
   };
 
-  const showHistoryWarning = state.history.length > HISTORY_WARNING_THRESHOLD;
+  const handleClearToHome = () => dispatch({ type: ACTIONS.RESET_HOME, homeId });
+  const handleClearKeepCurrent = () => dispatch({ type: ACTIONS.CLEAR_KEEP_CURRENT });
+
+  const depthText = `${state.currentIndex + 1}/${state.history.length}`;
+  const stripWidth = state.history.length * 400;
 
   return (
     <div style={styles.app}>
       <div style={styles.navBar}>
-        <button onClick={() => dispatch({ type: 'BACK' })} disabled={state.currentIndex === 0}>
+        <button className="btn" onClick={() => dispatch({ type: ACTIONS.HOME })} title="Home (Home key)">
+          🏠 Home
+        </button>
+        <button
+          className="btn"
+          onClick={() => dispatch({ type: ACTIONS.BACK })}
+          disabled={state.currentIndex === 0}
+          title="Back (←)"
+        >
           ◄ Back
         </button>
-        <button onClick={() => dispatch({ type: 'HOME' })}>🏠 Home</button>
-        <JumpButtons hiddenAncestors={hiddenAncestors} onJump={(index) => dispatch({ type: 'JUMP', index })} />
-        <div style={styles.spacer} />
+        <div className="breadcrumb" style={styles.breadcrumb}>
+          {visibleHistory.map((id, idx) => {
+            const doc = DOCS[id];
+            const title = doc?.title || doc?.name || id;
+            return (
+              <span key={`${id}-${idx}`}>
+                {idx ? ' › ' : ''}
+                {title}
+              </span>
+            );
+          })}
+        </div>
+        <div className="depth" style={styles.depth}>
+          {depthText}
+        </div>
+        <JumpButtons hiddenAncestors={hiddenAncestors} onJump={(index) => dispatch({ type: ACTIONS.JUMP, index })} />
         {showHistoryWarning && (
           <div style={styles.historyWarning}>
-            History: {state.history.length}
-            <button onClick={() => dispatch({ type: 'RESET_HOME' })} style={styles.clearBtn}>
+            <span>History: {state.history.length}</span>
+            <button className="btn" onClick={handleClearToHome}>
               Reset to Home
+            </button>
+            <button className="btn" onClick={handleClearKeepCurrent}>
+              Clear, stay here
             </button>
           </div>
         )}
       </div>
 
-      <div ref={scrollRef} style={styles.scrollViewport}>
-        <div style={styles.paneGrid(visibleHistory.length)}>
-          {visibleHistory.map((docId, idx) => {
+      <div style={styles.scrollViewport} ref={scrollRef}>
+        <div style={styles.paneGrid(stripWidth)}>
+          {state.history.map((docId, idx) => {
             const doc = DOCS[docId];
-            const isRightmost = idx === visibleHistory.length - 1;
+            if (!doc) {
+              return (
+                <div key={`missing-${docId}-${idx}`} style={styles.errorPane}>
+                  Missing document: {docId}
+                </div>
+              );
+            }
+            const title = doc.title || doc.name || docId;
+            const isRightmost = idx === state.currentIndex;
             return (
-              <PaneErrorBoundary key={`pane-boundary-${docId}-${idx}`}>
-                <div style={styles.pane}>
-                  <div style={styles.paneTitle}>{doc.title}</div>
-                  <CompleteMarkdownRenderer content={doc.content} />
-                  <RelatedLinks node={doc} onClick={handleLinkClick} highlightFirst={isRightmost} />
+              <PaneErrorBoundary key={`pane-${idx}`}>
+                <div
+                  className="pane"
+                  style={styles.pane}
+                  tabIndex={isRightmost ? 0 : -1}
+                  ref={isRightmost ? currentPaneRef : null}
+                  role={isRightmost ? 'region' : undefined}
+                  aria-label={isRightmost ? title : undefined}
+                >
+                  <div style={styles.paneTitle}>Position {idx + 1}: {title}</div>
+                  <div className="mock-pdf">[PDF Preview: {title}]</div>
+                  <div className="markdown-content">
+                    <CompleteMarkdownRenderer content={doc.content} />
+                  </div>
+                  <RelatedLinks doc={doc} highlightFirst={isRightmost} onClick={handleLinkClick} />
                 </div>
               </PaneErrorBoundary>
             );
@@ -144,14 +282,14 @@ export default function V1NavigationPrototype() {
 
 function navigateForwardFrom(state, dispatch, showToast) {
   const start = Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1));
-  const visibleHistory = state.history.slice(start, state.currentIndex + 1);
-  const rightmostId = visibleHistory[visibleHistory.length - 1];
+  const visible = state.history.slice(start, state.currentIndex + 1);
+  const rightmostId = visible[visible.length - 1];
   const doc = DOCS[rightmostId];
   const firstLink = doc?.links?.[0];
   if (firstLink && DOCS[firstLink]) {
-    dispatch({ type: 'NAVIGATE', id: firstLink });
+    dispatch({ type: ACTIONS.NAVIGATE, id: firstLink });
   } else {
-    showToast('No links available on this page');
+    showToast('No links to navigate from this page');
   }
 }
 
@@ -160,11 +298,16 @@ function JumpButtons({ hiddenAncestors, onJump }) {
 
   if (hiddenAncestors.length <= MAX_FIRST_JUMP_BUTTONS + MAX_LAST_JUMP_BUTTONS + 2) {
     return (
-      <div style={styles.jumpContainer}>
-        <div style={styles.jumpScroll}>
+      <div className="jump-buttons-container" style={JUMP_BUTTON_STYLES.container}>
+        <div className="jump-buttons-scroll" style={JUMP_BUTTON_STYLES.scroll}>
           {hiddenAncestors.map((id, idx) => (
-            <button key={`${id}-${idx}`} onClick={() => onJump(idx)} style={styles.jumpButton}>
-              ◄ {DOCS[id]?.title ?? id}
+            <button
+              key={`jump-${id}-${idx}`}
+              className="jump-btn"
+              style={JUMP_BUTTON_STYLES.button}
+              onClick={() => onJump(idx)}
+            >
+              ◄ {DOCS[id]?.title || DOCS[id]?.name || id}
             </button>
           ))}
         </div>
@@ -172,24 +315,36 @@ function JumpButtons({ hiddenAncestors, onJump }) {
     );
   }
 
-  const firstSlice = hiddenAncestors.slice(0, MAX_FIRST_JUMP_BUTTONS);
-  const lastSlice = hiddenAncestors.slice(-MAX_LAST_JUMP_BUTTONS);
-  const gapCount = hiddenAncestors.length - firstSlice.length - lastSlice.length;
+  const first = hiddenAncestors.slice(0, MAX_FIRST_JUMP_BUTTONS);
+  const last = hiddenAncestors.slice(-MAX_LAST_JUMP_BUTTONS);
+  const gapCount = hiddenAncestors.length - first.length - last.length;
 
   return (
-    <div style={styles.jumpContainer}>
-      <div style={styles.jumpScroll}>
-        {firstSlice.map((id, idx) => (
-          <button key={`first-${id}-${idx}`} onClick={() => onJump(idx)} style={styles.jumpButton}>
-            ◄ {DOCS[id]?.title ?? id}
+    <div className="jump-buttons-container" style={JUMP_BUTTON_STYLES.container}>
+      <div className="jump-buttons-scroll" style={JUMP_BUTTON_STYLES.scroll}>
+        {first.map((id, idx) => (
+          <button
+            key={`jump-first-${id}-${idx}`}
+            className="jump-btn"
+            style={JUMP_BUTTON_STYLES.button}
+            onClick={() => onJump(idx)}
+          >
+            ◄ {DOCS[id]?.title || DOCS[id]?.name || id}
           </button>
         ))}
-        <span style={styles.moreIndicator}>… {gapCount} earlier …</span>
-        {lastSlice.map((id, idx) => {
-          const actualIndex = hiddenAncestors.length - lastSlice.length + idx;
+        <span className="gap-indicator" style={JUMP_BUTTON_STYLES.gap}>
+          … {gapCount} earlier …
+        </span>
+        {last.map((id, idx) => {
+          const absoluteIndex = hiddenAncestors.length - last.length + idx;
           return (
-            <button key={`last-${id}-${idx}`} onClick={() => onJump(actualIndex)} style={styles.jumpButton}>
-              ◄ {DOCS[id]?.title ?? id}
+            <button
+              key={`jump-last-${id}-${idx}`}
+              className="jump-btn"
+              style={JUMP_BUTTON_STYLES.button}
+              onClick={() => onJump(absoluteIndex)}
+            >
+              ◄ {DOCS[id]?.title || DOCS[id]?.name || id}
             </button>
           );
         })}
@@ -198,29 +353,27 @@ function JumpButtons({ hiddenAncestors, onJump }) {
   );
 }
 
-function RelatedLinks({ node, onClick, highlightFirst }) {
-  const validLinks = (node.links || []).filter((linkId) => !!DOCS[linkId]);
+function RelatedLinks({ doc, onClick, highlightFirst }) {
+  const validLinks = (doc.links || []).filter((id) => !!DOCS[id]);
   if (!validLinks.length) return null;
-
   return (
-    <div style={styles.related}>
+    <div className="related-diagrams">
       <h4>Related Diagrams</h4>
       <ul>
         {validLinks.map((linkId, idx) => {
           const target = DOCS[linkId];
+          const title = target.title || target.name || linkId;
           const isFirst = highlightFirst && idx === 0;
           return (
-            <li key={`${linkId}-${idx}`}>
+            <li key={linkId}>
               <button
                 onClick={() => onClick(linkId)}
-                style={{
-                  ...styles.relatedButton,
-                  ...(isFirst ? styles.keyboardHint : {}),
-                }}
-                {...(isFirst ? { 'aria-label': `Navigate to ${target.title}` } : {})}
+                className={isFirst ? 'keyboard-hint' : undefined}
+                aria-label={`Navigate to ${title}`}
+                title={isFirst ? 'Arrow →' : undefined}
               >
-                {target.title}
-                {isFirst && <span style={styles.hintIcon}>→</span>}
+                {title}
+                {isFirst && <span className="hint">→</span>}
               </button>
             </li>
           );
@@ -241,6 +394,7 @@ class PaneErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error) {
+    // eslint-disable-next-line no-console
     console.warn('Pane rendering error:', error);
   }
 
@@ -249,7 +403,9 @@ class PaneErrorBoundary extends React.Component {
       return (
         <div style={styles.errorPane}>
           <p>Content failed to load.</p>
-          <button onClick={() => this.setState({ hasError: false })}>Retry</button>
+          <button className="btn" onClick={() => this.setState({ hasError: false })}>
+            Retry
+          </button>
         </div>
       );
     }
@@ -273,13 +429,27 @@ const styles = {
     gap: '8px',
     flexWrap: 'wrap',
   },
+  breadcrumb: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: 14,
+    color: '#555',
+    display: 'flex',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    gap: '4px',
+  },
+  depth: {
+    fontSize: 12,
+    color: '#666',
+    whiteSpace: 'nowrap',
+  },
   scrollViewport: {
     overflowX: 'auto',
   },
-  paneGrid: (count) => ({
-    display: 'grid',
-    gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))`,
-    gap: '16px',
+  paneGrid: (width) => ({
+    display: 'flex',
+    width,
   }),
   pane: {
     background: '#fff',
@@ -289,6 +459,9 @@ const styles = {
     maxHeight: '80vh',
     overflowY: 'auto',
     overflowX: 'auto',
+    width: 400,
+    boxSizing: 'border-box',
+    borderRight: '1px solid #eee',
   },
   paneTitle: {
     fontSize: 12,
@@ -298,51 +471,6 @@ const styles = {
   },
   related: {
     marginTop: 16,
-  },
-  relatedButton: {
-    background: '#eef3ff',
-    border: 'none',
-    padding: '6px 10px',
-    borderRadius: 6,
-    cursor: 'pointer',
-    color: '#1a45b0',
-  },
-  keyboardHint: {
-    position: 'relative',
-    fontWeight: 'bold',
-  },
-  hintIcon: {
-    marginLeft: 6,
-    color: '#1a73e8',
-    fontSize: 12,
-  },
-  jumpContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  jumpScroll: {
-    display: 'flex',
-    gap: 8,
-    overflowX: 'auto',
-    paddingBottom: 4,
-    maxWidth: 600,
-    whiteSpace: 'nowrap',
-  },
-  jumpButton: {
-    border: 'none',
-    background: '#f0f4ff',
-    padding: '4px 8px',
-    borderRadius: 4,
-    cursor: 'pointer',
-  },
-  moreIndicator: {
-    color: '#666',
-    fontSize: 12,
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '0 8px',
   },
   historyWarning: {
     background: '#fffbea',
@@ -380,5 +508,6 @@ const styles = {
     padding: 16,
     border: '1px solid #ffd1d1',
     textAlign: 'center',
+    width: '100%',
   },
 };
