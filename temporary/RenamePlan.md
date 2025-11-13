@@ -64,15 +64,15 @@ Mapping
 
 - Summary: `ConstraintsAndAssumptions.md`
   - Full: `Constraints and Assumptions.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Possibly (from ADRs once full set exists)
+  - Present?: Yes
+  - Rename needed?: Done
+  - Link updates?: N/A
 
 - Summary: `DefinitionDictionary.md`
   - Full: `Definition Dictionary.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Possibly
+  - Present?: Yes
+  - Rename needed?: Done
+  - Link updates?: N/A
 
 - Summary: `DesignDecisionsLog.md`
   - Full: `Design Decisions Log.md`
@@ -82,9 +82,9 @@ Mapping
 
 - Summary: `ExecutionPlan.md`
   - Full: `Execution Plan.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Possibly
+  - Present?: Yes
+  - Rename needed?: Done
+  - Link updates?: N/A
 
 - Summary: `ImplementationRoadmap.md`
   - Full: `Implementation Roadmap.md`
@@ -100,9 +100,9 @@ Mapping
 
 - Summary: `MockDataTemplate.md`
   - Full: `Mock Data Template.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Possibly
+  - Present?: Yes
+  - Rename needed?: Done
+  - Link updates?: N/A
 
 - Summary: `SectionsStatusTracker.md`
   - Full: `Sections Status Tracker.md`
@@ -111,5 +111,4 @@ Mapping
   - Link updates?: No (current full content has no internal links)
 
 Notes
-- `final/full/ADR-009 Home Position Navigation.md` exists (full only; summary intentionally omitted). Its “See:” links currently use compact basenames (e.g., `ADR003FixedThreePaneViewport`). Once the full ADR files exist under spaced names, we must update these links to match the spaced basenames.
- - `final/full/ADR-009 Home Position Navigation.md` exists (full only; summary intentionally omitted). Its "See:" links were adjusted to avoid references to missing full ADRs; now it links only to `Design Decisions Log` until other full ADRs are added.
+- `final/full/ADR-009 Home Position Navigation.md` exists (full) and summaries now also includes `ADR-009 Home Position Navigation.md`. Cross‑links in full ADR‑009 were adjusted to valid targets in the full set.
