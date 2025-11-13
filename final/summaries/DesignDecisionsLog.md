@@ -70,8 +70,6 @@ Status: Locked
 - [ADR006MockPDFsNotRealRendering](ADR006MockPDFsNotRealRendering)
 - [ADR007AppendForwardNavigation](ADR007AppendForwardNavigation)
 - [ADR008PureStatelessRenderer](ADR008PureStatelessRenderer)
-- [ADR-009 Home Position Navigation](ADR-009 Home Position Navigation)
-
 See: [ConstraintsAndAssumptions](ConstraintsAndAssumptions)
  
 ## Supporting Documentation
