@@ -88,9 +88,9 @@ Mapping
 
 - Summary: `ImplementationRoadmap.md`
   - Full: `Implementation Roadmap.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Possibly
+  - Present?: Yes
+  - Rename needed?: Done (from Downloads)
+  - Link updates?: N/A (no internal cross-file links)
 
 - Summary: `MasterIssueChecklist.md`
   - Full: `Master Issue Checklist.md`

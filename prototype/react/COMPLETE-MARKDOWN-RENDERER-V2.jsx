@@ -1,6 +1,6 @@
-export default function CompleteMarkdownRenderer() {
-  // Sample content exercising the supported subset for V1
-  const content = `# Main Header
+export default function CompleteMarkdownRenderer({ content: externalContent, onClickLink } = {}) {
+  // Sample content exercising the supported subset for V1 (used if no content prop provided)
+  const content = externalContent ?? `# Main Header
 
 This is regular text with **bold** and *italic* and ***bold italic***.
 
@@ -56,15 +56,15 @@ Another paragraph noting exclusions.
       maxWidth: '900px',
       margin: '0 auto'
     }}>
-      <MarkdownRenderer content={content} />
+      <MarkdownRenderer content={content} onClickLink={onClickLink} />
     </div>
   );
 }
 
 // V1 subset: headers (#, ##, ###, ####), bold (**), inline code (`), bullet lists (- item),
-// fenced code blocks (```), and links displayed as blue underlined text
-// (not clickable in V1; navigation wiring comes in a later step).
-function MarkdownRenderer({ content }) {
+// fenced code blocks (```), and links displayed as blue underlined text.
+// If an onClickLink callback is provided, links become clickable and call onClickLink(targetId).
+function MarkdownRenderer({ content, onClickLink }) {
   const lines = content.split('\n');
   const elements = [];
   let i = 0;
@@ -83,28 +83,28 @@ function MarkdownRenderer({ content }) {
     if (line.startsWith('# ') && !line.startsWith('## ')) {
       elements.push(
         <div key={i} style={getHeaderStyle(1)}>
-          {renderInline(line.substring(2))}
+          {renderInline(line.substring(2), onClickLink)}
         </div>
       );
       i++;
     } else if (line.startsWith('## ') && !line.startsWith('### ')) {
       elements.push(
         <div key={i} style={getHeaderStyle(2)}>
-          {renderInline(line.substring(3))}
+          {renderInline(line.substring(3), onClickLink)}
         </div>
       );
       i++;
     } else if (line.startsWith('### ') && !line.startsWith('#### ')) {
       elements.push(
         <div key={i} style={getHeaderStyle(3)}>
-          {renderInline(line.substring(4))}
+          {renderInline(line.substring(4), onClickLink)}
         </div>
       );
       i++;
     } else if (line.startsWith('#### ')) {
       elements.push(
         <div key={i} style={getHeaderStyle(4)}>
-          {renderInline(line.substring(5))}
+          {renderInline(line.substring(5), onClickLink)}
         </div>
       );
       i++;
@@ -143,7 +143,7 @@ function MarkdownRenderer({ content }) {
         <div key={i} style={{ margin: '12px 0' }}>
           {listItems.map((item, idx) => (
             <div key={idx} style={{ paddingLeft: '20px', color: '#808080' }}>
-              - {renderInline(item)}
+              - {renderInline(item, onClickLink)}
             </div>
           ))}
         </div>
@@ -154,7 +154,7 @@ function MarkdownRenderer({ content }) {
     else {
       elements.push(
         <div key={i} style={{ color: '#808080', margin: '12px 0' }}>
-          {renderInline(line)}
+          {renderInline(line, onClickLink)}
         </div>
       );
       i++;
@@ -173,7 +173,7 @@ function getHeaderStyle(level) {
   };
 }
 
-function renderInline(text) {
+function renderInline(text, onClickLink) {
   const parts = [];
   let lastIndex = 0;
 
@@ -212,13 +212,30 @@ function renderInline(text) {
         </span>
       );
     }
-    // Link - SHOW ONLY TEXT (blue, underlined)
+    // Link - SHOW ONLY TEXT (blue, underlined); clickable if onClickLink provided
     else if (match[4]) {
-      parts.push(
-        <span key={`l-${match.index}`} style={{ color: '#1a73e8', textDecoration: 'underline' }}>
-          {match[4]}
-        </span>
-      );
+      const linkText = match[4];
+      const target = match[5];
+      if (typeof onClickLink === 'function') {
+        parts.push(
+          <button
+            key={`l-${match.index}`}
+            onClick={() => onClickLink(target)}
+            style={{
+              background: 'none', border: 'none', color: '#1a73e8',
+              textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit'
+            }}
+          >
+            {linkText}
+          </button>
+        );
+      } else {
+        parts.push(
+          <span key={`l-${match.index}`} style={{ color: '#1a73e8', textDecoration: 'underline' }}>
+            {linkText}
+          </span>
+        );
+      }
     }
 
     lastIndex = match.index + match[0].length;
