@@ -1,3 +1,5 @@
+let globalInlineKey = 0;
+
 const SAMPLE_CONTENT = `# Home (Staged Writing Plan)
 
 This renderer intentionally excludes strikethrough, images, block quotes, and numbered lists in V1.
@@ -30,13 +32,12 @@ function renderMarkdown(content) {
   let inCodeBlock = false;
   let codeBuffer = [];
   let listBuffer = [];
-
   const flushList = (key) => {
     if (!listBuffer.length) return;
     elements.push(
       <ul key={`list-${key}`} style={styles.list}>
         {listBuffer.map((text, idx) => (
-          <li key={`${key}-${idx}`}>{renderInline(text)}</li>
+          <li key={`li-${key}-${idx}`}>{renderInline(text)}</li>
         ))}
       </ul>
     );
@@ -64,8 +65,10 @@ function renderMarkdown(content) {
     }
 
     if (!line.trim()) {
-      flushList(index);
-      elements.push(<div key={`spacer-${index}`} style={styles.spacer} />);
+      // Stay in list if currently aggregating list items
+      if (!listBuffer.length) {
+        elements.push(<div key={`spacer-${index}`} style={styles.spacer} />);
+      }
       return;
     }
 
@@ -110,14 +113,32 @@ function renderMarkdown(content) {
 function renderInline(text) {
   const parts = [];
   let remaining = text;
-  let keyCounter = 0;
 
   while (remaining.length) {
     if (remaining.startsWith('**')) {
       const end = remaining.indexOf('**', 2);
       if (end !== -1) {
-        parts.push(<strong key={`b-${keyCounter++}`}>{remaining.slice(2, end)}</strong>);
+        const boldText = remaining.slice(2, end);
+        parts.push(
+          <strong key={`bold-${globalInlineKey++}`}>
+            {renderInline(boldText)}
+          </strong>
+        );
         remaining = remaining.slice(end + 2);
+        continue;
+      }
+    }
+
+    if (remaining.startsWith('*')) {
+      const end = remaining.indexOf('*', 1);
+      if (end !== -1) {
+        const italicText = remaining.slice(1, end);
+        parts.push(
+          <em key={`italic-${globalInlineKey++}`}>
+            {renderInline(italicText)}
+          </em>
+        );
+        remaining = remaining.slice(end + 1);
         continue;
       }
     }
@@ -125,7 +146,11 @@ function renderInline(text) {
     if (remaining.startsWith('`')) {
       const end = remaining.indexOf('`', 1);
       if (end !== -1) {
-        parts.push(<code key={`c-${keyCounter++}`}>{remaining.slice(1, end)}</code>);
+        parts.push(
+          <code key={`code-${globalInlineKey++}`}>
+            {remaining.slice(1, end)}
+          </code>
+        );
         remaining = remaining.slice(end + 1);
         continue;
       }
@@ -141,7 +166,7 @@ function renderInline(text) {
         closeParen !== -1
       ) {
         parts.push(
-          <span key={`link-${keyCounter++}`} style={styles.inlineLink}>
+          <span key={`link-${globalInlineKey++}`} style={styles.inlineLink}>
             {remaining.slice(1, closingBracket)}
           </span>
         );
@@ -180,6 +205,7 @@ const styles = {
     borderRadius: 8,
     padding: '12px 16px',
     overflowX: 'auto',
+    maxWidth: '100%',
   },
   paragraph: {
     margin: '8px 0',

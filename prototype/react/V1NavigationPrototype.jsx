@@ -1,9 +1,10 @@
-import { useReducer, useRef, useEffect, useMemo } from 'react';
+import React, { useReducer, useRef, useEffect, useMemo, useState } from 'react';
 import CompleteMarkdownRenderer from './COMPLETE-MARKDOWN-RENDERER-V2.jsx';
 import { DOCS, START_DOC_ID } from './docsData.js';
 
 const MAX_VISIBLE_PANES = 3;
-const MAX_VISIBLE_JUMP_BUTTONS = 10;
+const MAX_FIRST_JUMP_BUTTONS = 5;
+const MAX_LAST_JUMP_BUTTONS = 5;
 const HISTORY_WARNING_THRESHOLD = 100;
 
 const initialState = {
@@ -15,23 +16,16 @@ function navigationReducer(state, action) {
   switch (action.type) {
     case 'NAVIGATE': {
       const nextHistory = [...state.history.slice(0, state.currentIndex + 1), action.id];
-      return {
-        history: nextHistory,
-        currentIndex: nextHistory.length - 1,
-      };
+      return { history: nextHistory, currentIndex: nextHistory.length - 1 };
     }
     case 'BACK':
-      return state.currentIndex > 0
-        ? { ...state, currentIndex: state.currentIndex - 1 }
-        : state;
+      return state.currentIndex > 0 ? { ...state, currentIndex: state.currentIndex - 1 } : state;
     case 'HOME':
       return { ...state, currentIndex: 0 };
     case 'JUMP':
       return { ...state, currentIndex: action.index };
-    case 'CLEAR_HISTORY': {
-      const currentId = state.history[state.currentIndex];
-      return { history: [currentId], currentIndex: 0 };
-    }
+    case 'RESET_HOME':
+      return { history: [START_DOC_ID], currentIndex: 0 };
     default:
       return state;
   }
@@ -39,12 +33,22 @@ function navigationReducer(state, action) {
 
 export default function V1NavigationPrototype() {
   const [state, dispatch] = useReducer(navigationReducer, initialState);
+  const stateRef = useRef(state);
   const scrollRef = useRef(null);
-  const navStateRef = useRef(state);
+  const [toast, setToast] = useState('');
+  const toastTimeoutRef = useRef(null);
 
   useEffect(() => {
-    navStateRef.current = state;
+    stateRef.current = state;
   }, [state]);
+
+  useEffect(() => () => toastTimeoutRef.current && clearTimeout(toastTimeoutRef.current), []);
+
+  const showToast = (message) => {
+    setToast(message);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToast(''), 2000);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -54,7 +58,7 @@ export default function V1NavigationPrototype() {
         dispatch({ type: 'BACK' });
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
-        handleArrowRight();
+        navigateForwardFrom(stateRef.current, dispatch, showToast);
       } else if (e.key === 'Home') {
         e.preventDefault();
         dispatch({ type: 'HOME' });
@@ -64,25 +68,11 @@ export default function V1NavigationPrototype() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleArrowRight = () => {
-    const visibleHistory = state.history.slice(
-      Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1)),
-      state.currentIndex + 1
-    );
-    const rightmostId = visibleHistory[visibleHistory.length - 1];
-    const doc = DOCS[rightmostId];
-    const firstLink = doc?.links?.[0];
-    if (firstLink && DOCS[firstLink]) {
-      dispatch({ type: 'NAVIGATE', id: firstLink });
-    }
-  };
-
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     el.scrollTo({
       left: Math.max(0, (state.currentIndex - 2) * 400),
       behavior: prefersReduced ? 'auto' : 'smooth',
@@ -94,18 +84,15 @@ export default function V1NavigationPrototype() {
     return state.history.slice(start, state.currentIndex + 1);
   }, [state.history, state.currentIndex]);
 
-  const hiddenAncestors = state.history.slice(
-    0,
-    Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1))
-  );
+  const hiddenAncestors = state.history.slice(0, Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1)));
 
   const handleLinkClick = (targetId) => {
-    if (!DOCS[targetId]) return;
+    if (!DOCS[targetId]) {
+      showToast(`Cannot navigate to "${targetId}"`);
+      return;
+    }
     dispatch({ type: 'NAVIGATE', id: targetId });
   };
-
-  const currentId = state.history[state.currentIndex];
-  const currentDoc = DOCS[currentId];
 
   const showHistoryWarning = state.history.length > HISTORY_WARNING_THRESHOLD;
 
@@ -120,9 +107,9 @@ export default function V1NavigationPrototype() {
         <div style={styles.spacer} />
         {showHistoryWarning && (
           <div style={styles.historyWarning}>
-            History: {state.history.length}{' '}
-            <button onClick={() => dispatch({ type: 'CLEAR_HISTORY' })} style={styles.clearBtn}>
-              Clear
+            History: {state.history.length}
+            <button onClick={() => dispatch({ type: 'RESET_HOME' })} style={styles.clearBtn}>
+              Reset to Home
             </button>
           </div>
         )}
@@ -134,39 +121,75 @@ export default function V1NavigationPrototype() {
             const doc = DOCS[docId];
             const isRightmost = idx === visibleHistory.length - 1;
             return (
-              <div key={`${docId}-${idx}`} style={styles.pane}>
-                <div style={styles.paneTitle}>{doc.title}</div>
-                <CompleteMarkdownRenderer content={doc.content} />
-                <RelatedLinks node={doc} onClick={handleLinkClick} highlightFirst={isRightmost} />
-              </div>
+              <PaneErrorBoundary key={`pane-boundary-${docId}-${idx}`}>
+                <div style={styles.pane}>
+                  <div style={styles.paneTitle}>{doc.title}</div>
+                  <CompleteMarkdownRenderer content={doc.content} />
+                  <RelatedLinks node={doc} onClick={handleLinkClick} highlightFirst={isRightmost} />
+                </div>
+              </PaneErrorBoundary>
             );
           })}
         </div>
       </div>
+
+      {toast && (
+        <div style={styles.toast} role="status" aria-live="polite">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
 
+function navigateForwardFrom(state, dispatch, showToast) {
+  const start = Math.max(0, state.currentIndex - (MAX_VISIBLE_PANES - 1));
+  const visibleHistory = state.history.slice(start, state.currentIndex + 1);
+  const rightmostId = visibleHistory[visibleHistory.length - 1];
+  const doc = DOCS[rightmostId];
+  const firstLink = doc?.links?.[0];
+  if (firstLink && DOCS[firstLink]) {
+    dispatch({ type: 'NAVIGATE', id: firstLink });
+  } else {
+    showToast('No links available on this page');
+  }
+}
+
 function JumpButtons({ hiddenAncestors, onJump }) {
   if (!hiddenAncestors.length) return null;
-  const hasOverflow = hiddenAncestors.length > MAX_VISIBLE_JUMP_BUTTONS;
-  const recent = hiddenAncestors.slice(-MAX_VISIBLE_JUMP_BUTTONS);
-  const offset = hiddenAncestors.length - recent.length;
+
+  if (hiddenAncestors.length <= MAX_FIRST_JUMP_BUTTONS + MAX_LAST_JUMP_BUTTONS + 2) {
+    return (
+      <div style={styles.jumpContainer}>
+        <div style={styles.jumpScroll}>
+          {hiddenAncestors.map((id, idx) => (
+            <button key={`${id}-${idx}`} onClick={() => onJump(idx)} style={styles.jumpButton}>
+              ◄ {DOCS[id]?.title ?? id}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const firstSlice = hiddenAncestors.slice(0, MAX_FIRST_JUMP_BUTTONS);
+  const lastSlice = hiddenAncestors.slice(-MAX_LAST_JUMP_BUTTONS);
+  const gapCount = hiddenAncestors.length - firstSlice.length - lastSlice.length;
 
   return (
     <div style={styles.jumpContainer}>
-      {hasOverflow && (
-        <span style={styles.moreIndicator}>
-          … {hiddenAncestors.length - recent.length} earlier
-        </span>
-      )}
       <div style={styles.jumpScroll}>
-        {recent.map((id, idx) => {
-          const actualIndex = offset + idx;
-          const doc = DOCS[id];
+        {firstSlice.map((id, idx) => (
+          <button key={`first-${id}-${idx}`} onClick={() => onJump(idx)} style={styles.jumpButton}>
+            ◄ {DOCS[id]?.title ?? id}
+          </button>
+        ))}
+        <span style={styles.moreIndicator}>… {gapCount} earlier …</span>
+        {lastSlice.map((id, idx) => {
+          const actualIndex = hiddenAncestors.length - lastSlice.length + idx;
           return (
-            <button key={`${id}-${actualIndex}`} onClick={() => onJump(actualIndex)} style={styles.jumpButton}>
-              ◄ {doc?.title ?? id}
+            <button key={`last-${id}-${idx}`} onClick={() => onJump(actualIndex)} style={styles.jumpButton}>
+              ◄ {DOCS[id]?.title ?? id}
             </button>
           );
         })}
@@ -176,27 +199,28 @@ function JumpButtons({ hiddenAncestors, onJump }) {
 }
 
 function RelatedLinks({ node, onClick, highlightFirst }) {
-  if (!node.links?.length) return null;
+  const validLinks = (node.links || []).filter((linkId) => !!DOCS[linkId]);
+  if (!validLinks.length) return null;
+
   return (
     <div style={styles.related}>
       <h4>Related Diagrams</h4>
       <ul>
-        {node.links.map((linkId, idx) => {
+        {validLinks.map((linkId, idx) => {
           const target = DOCS[linkId];
+          const isFirst = highlightFirst && idx === 0;
           return (
             <li key={`${linkId}-${idx}`}>
               <button
                 onClick={() => onClick(linkId)}
                 style={{
                   ...styles.relatedButton,
-                  ...(highlightFirst && idx === 0 ? styles.keyboardHint : {}),
+                  ...(isFirst ? styles.keyboardHint : {}),
                 }}
-                {...(highlightFirst && idx === 0
-                  ? { 'aria-label': `Navigate to ${target?.title ?? linkId}` }
-                  : {})}
+                {...(isFirst ? { 'aria-label': `Navigate to ${target.title}` } : {})}
               >
-                {target?.title ?? linkId}
-                {highlightFirst && idx === 0 && <span style={styles.hintIcon}>→</span>}
+                {target.title}
+                {isFirst && <span style={styles.hintIcon}>→</span>}
               </button>
             </li>
           );
@@ -204,6 +228,33 @@ function RelatedLinks({ node, onClick, highlightFirst }) {
       </ul>
     </div>
   );
+}
+
+class PaneErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error) {
+    console.warn('Pane rendering error:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={styles.errorPane}>
+          <p>Content failed to load.</p>
+          <button onClick={() => this.setState({ hasError: false })}>Retry</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 const styles = {
@@ -237,6 +288,7 @@ const styles = {
     padding: 16,
     maxHeight: '80vh',
     overflowY: 'auto',
+    overflowX: 'auto',
   },
   paneTitle: {
     fontSize: 12,
@@ -288,6 +340,9 @@ const styles = {
   moreIndicator: {
     color: '#666',
     fontSize: 12,
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0 8px',
   },
   historyWarning: {
     background: '#fffbea',
@@ -308,5 +363,22 @@ const styles = {
   },
   spacer: {
     flex: 1,
+  },
+  toast: {
+    position: 'fixed',
+    bottom: 24,
+    right: 24,
+    background: '#333',
+    color: '#fff',
+    padding: '12px 16px',
+    borderRadius: 8,
+    boxShadow: '0 6px 16px rgba(0,0,0,0.25)',
+  },
+  errorPane: {
+    background: '#fff6f6',
+    borderRadius: 12,
+    padding: 16,
+    border: '1px solid #ffd1d1',
+    textAlign: 'center',
   },
 };
