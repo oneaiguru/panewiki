@@ -73,19 +73,31 @@ const userSchema = new Schema({
   createdAt: Date
 });
 
-// HAIKU-2: Implement middleware
-const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  try {
-    req.user = jwt.verify(token, SECRET);
-    next();
-  } catch {
-    res.status(401).json({ error: 'Invalid token' });
-  }
+// HAIKU-2: Harden auth surface
+// /login: 5 req/min, bcrypt verify, RS256 sign (≤15 lines)
+import rateLimit from 'express-rate-limit'; import bcrypt from 'bcryptjs'; import jwt from 'jsonwebtoken';
+export const loginLimiter = rateLimit({ windowMs: 60_000, max: 5 });            // rate limit
+app.post('/login', loginLimiter, async (req, res) => {                           // 1
+  const { email, password } = req.body;                                          // 2
+  const user = await Users.findOne({ email }).lean();                            // 3
+  if (!user || !(await bcrypt.compare(password, user.hash)))                     // 4
+    return res.status(401).json({ error: 'Unauthorized' });                      // 5
+  const key = process.env.JWT_PRIVATE_KEY;                                       // 6
+  const token = jwt.sign({ sub: user._id, org: user.orgId }, key,                // 7
+                         { algorithm: 'RS256', expiresIn: '1h' });               // 8
+  return res.json({ token });                                                    // 9
+});                                                                              // 10
+// Tip: swap to argon2 by using `import { verify } from 'argon2'` & `await verify(user.hash, password)`
+
+export const requireAuth = (req, res, next) => {
+  const m = req.headers.authorization?.match(/^Bearer\s+(.+)$/);
+  if (!m) return res.status(401).json({ error: 'Unauthorized' });
+  try { req.user = jwt.verify(m[1], process.env.JWT_PUBLIC_KEY, { algorithms: ['RS256'] }); return next(); }
+  catch { return res.status(401).json({ error: 'Unauthorized' }); }
 };
 
 // HAIKU-3: Apply to routes
-app.get('/users', authMiddleware, (req, res) => {
+app.get('/users', requireAuth, (req, res) => {
   const users = db.query(
     'SELECT * FROM users WHERE org = ?',
     [req.user.orgId]
