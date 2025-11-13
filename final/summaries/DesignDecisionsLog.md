@@ -56,4 +56,20 @@ Status: Locked
 ← (back), → (forward), Home work globally.
 Status: Locked
 
+## Decision #15: Home Position = ExecutionPlan
+Users can jump to ExecutionPlan (home) via Home button or keyboard. History is preserved; only currentIndex resets to 0.
+Status: Locked
+
+## Related Architecture Decisions
+
+- [ADR001HistoryBasedNavigation](ADR001HistoryBasedNavigation)
+- [ADR002AppendOnlyHistory](ADR002AppendOnlyHistory)
+- [ADR003FixedThreePaneViewport](ADR003FixedThreePaneViewport)
+- [ADR004ComputedScrollPosition](ADR004ComputedScrollPosition)
+- [ADR005ReactHooksState](ADR005ReactHooksState)
+- [ADR006MockPDFsNotRealRendering](ADR006MockPDFsNotRealRendering)
+- [ADR007AppendForwardNavigation](ADR007AppendForwardNavigation)
+- [ADR008PureStatelessRenderer](ADR008PureStatelessRenderer)
+- [ADR-009 Home Position Navigation](ADR-009 Home Position Navigation)
+
 See: [ConstraintsAndAssumptions](ConstraintsAndAssumptions)
