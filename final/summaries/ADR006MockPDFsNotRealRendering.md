@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — panes show decorative PDF placeholders only.
+
 ## Decision
 
 Use colored placeholder boxes instead of real PDFs.

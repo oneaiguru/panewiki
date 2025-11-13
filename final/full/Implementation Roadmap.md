@@ -364,7 +364,7 @@ const handleClickLink = (targetDocId) => {
 - `scripts/generateDocsData.js` extracts:
   - `id` (filename without extension)
   - `title` (first `#` heading)
-  - `links` (all `[text](target)` references that are local IDs)
+  - `links` (all references such as `[ADR-001](ADR-001 History Based Navigation)` that are local IDs)
   - `content` (raw markdown, escaped for template literals)
 - Output file: `prototype/react/docsData.js` (or `src/data/docsData.js` in the production app).
 
@@ -387,7 +387,7 @@ Home node alignment:
 Keep the markdown set and the generated data in sync by re-running the script whenever the summaries change.
 
 **Link integrity**
-- Before regenerating, run the link checker described in `docs/LinkIntegrity.md` to ensure all `[text](target)` references resolve to actual documents.
+- Before regenerating, run the link checker described in `docs/LinkIntegrity.md` to ensure examples such as `[ADR-001](ADR-001 History Based Navigation)` resolve to actual documents.
 - The React prototype assumes data is link-safe; broken targets are caught by the script, not at runtime.
 
 ---

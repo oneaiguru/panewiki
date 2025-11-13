@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — panes include a decorative “PDF preview” placeholder; no attempt is made to render or fetch actual PDF content.
+
 **Date**: 2025-11-13
 
 ---

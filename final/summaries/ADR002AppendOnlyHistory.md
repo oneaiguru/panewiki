@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — new nodes are always appended; forward history is never pruned.
+
 ## Decision
 
 History array only grows. Never truncate or prune.

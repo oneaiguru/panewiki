@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — custom markdown subset renderer enforces the agreed contract; inline links stay text-only.
+
 ## Decision
 
 Navigation Layer owns ALL state.

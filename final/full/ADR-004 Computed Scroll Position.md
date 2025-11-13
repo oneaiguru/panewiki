@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — every navigation recalculates `scrollLeft` from the reducer state; manual scroll is hidden behind CSS, ensuring panes stay aligned.
+
 **Date**: 2025-11-13
 
 ---

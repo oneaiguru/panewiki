@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — the reducer appends every navigation target and never truncates forward entries; jump buttons surface earlier ancestors instead of pruning them.
+
 **Date**: 2025-11-13
 
 ---

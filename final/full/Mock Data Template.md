@@ -14,7 +14,7 @@ Run `node scripts/generateDocsData.js` whenever a summary changes. The script:
 
 1. Reads every `.md` under `final/summaries/`.
 2. Extracts the first `#` heading as the title.
-3. Collects all internal links (`[text](TargetId)`) that do not contain `://` or `/`.
+3. Collects all internal links (for example `[ADR-003](ADR-003 Fixed Three Pane Viewport)`) that do not contain `://` or `/`.
 4. Escapes the markdown content for template literal usage.
 5. Writes `prototype/react/docsData.js` exporting `DOCS`, `DOC_IDS`, and `START_DOC_ID`.
 
@@ -56,7 +56,7 @@ export const START_DOC_ID = "home"; // falls back if missing
 16. ADR008PureStatelessRenderer
 17. ADR-009 Home Position Navigation
 
-Each summary already embeds `[text](TargetId)` links pointing to the compact IDs above. No additional link lists are required—the script derives them automatically.
+Each summary already embeds links such as `[ADR-003](ADR-003 Fixed Three Pane Viewport)` pointing to the compact IDs above. No additional link lists are required—the script derives them automatically.
 
 ## Link Extraction Rules
 

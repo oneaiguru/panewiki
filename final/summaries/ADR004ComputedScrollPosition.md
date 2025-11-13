@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — scrollLeft is recomputed from reducer state; manual scroll is hidden.
+
 ## Decision
 
 ScrollLeft is always calculated from currentIndex.

@@ -1,6 +1,8 @@
 # ADR-008: Renderer-Independent Navigation
 
 **Status**: Accepted  
+> Implementation status: **Shipped in V1 ✅** — the renderer processes the agreed markdown subset with recursion guards; inline links remain text-only pending future interaction rules.
+
 **Date**: 2025-11-13
 
 ---
@@ -76,7 +78,7 @@ Output:
   - view          // JSX (web), string/ANSI (terminal), PDF page, or editor component
 Behavior:
   - Render content
-  - Turn [text](target) links into interactive controls that call onClickLink(target)
+  - Turn links such as `[ADR-001](ADR-001 History Based Navigation)` into interactive controls that call onClickLink(target)
 ```
 
 ---
@@ -109,7 +111,7 @@ if (matchIsMarkdownLink) {
 
 For the runtime renderer details (subset, regexes, styling), see `docs/RenderingSpec.md`. For authoring guidance, refer to `docs/AuthoringConventions.md`.
 
-Across all versions, markdown links of the form `[text](id)` are the primary navigation mechanism and must be parsed into interactive elements that trigger navigation to `id`.
+Across all versions, markdown links such as `[See ADR-001](ADR-001 History Based Navigation)` are the primary navigation mechanism and must be parsed into interactive elements that trigger navigation to the referenced id.
 
 ---
 

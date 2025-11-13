@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Partially superseded ⚠️** — V1 uses a reducer instead of multiple `useState` calls, but still relies on React Hooks without Redux/Context.
+
 ## Decision
 
 Use local useState for 2 variables.

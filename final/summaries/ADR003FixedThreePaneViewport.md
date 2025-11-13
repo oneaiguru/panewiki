@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — UI enforces three fixed-width panes with runtime width checks.
+
 ## Decision
 
 Show exactly 3 panes (400px each) in 1200px viewport.

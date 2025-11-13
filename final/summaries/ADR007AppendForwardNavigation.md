@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — forward navigation appends nodes even when revisiting mid-history.
+
 ## Decision
 
 Always append navigation to history. No branch tracking.

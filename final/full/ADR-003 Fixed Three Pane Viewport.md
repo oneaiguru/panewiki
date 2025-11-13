@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — the React shell renders three fixed-width panes over a horizontally scrolling strip, with runtime width checks logging a warning if panes drift from 400 px.
+
 **Date**: 2025-11-13
 
 ---

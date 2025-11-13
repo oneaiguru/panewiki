@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — canonical home node is `home`; UI Home button/key jump to history index 0.
+
 ## Decision
 
 `home` is the canonical entry point.

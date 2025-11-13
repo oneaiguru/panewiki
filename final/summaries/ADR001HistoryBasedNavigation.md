@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — reducer maintains an append-only history and drives the three-pane viewport.
+
 ## Decision
 
 Use graph-based navigation (any node → any node),

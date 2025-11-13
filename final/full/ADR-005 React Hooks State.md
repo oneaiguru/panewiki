@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Partially superseded ⚠️** — V1 consolidates history/index updates inside a reducer instead of multiple `useState` calls, but the underlying Hook-only approach (no Redux/Context) remains intact.
+
 **Date**: 2025-11-13
 
 ---

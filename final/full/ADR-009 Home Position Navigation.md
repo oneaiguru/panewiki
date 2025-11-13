@@ -1,6 +1,9 @@
 # ADR-009: Home Position Navigation
 
-**Status**: Accepted **Date**: Phase 1
+**Status**: Accepted  
+> Implementation status: **Shipped in V1 ✅** — the canonical home id is `home`, matching mock data and link integrity tooling, while the UI Home button/keyboard always return to index 0.
+
+**Date**: Phase 1
 
 ## Decision
 

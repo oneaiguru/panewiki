@@ -2,6 +2,8 @@
 
 **Status**: Accepted
 
+> Implementation status: **Shipped in V1 ✅** — forward navigation always appends new entries, even when visiting from the middle of history; controls encourage clearing rather than truncating.
+
 **Date**: 2025-11-13
 
 ---
