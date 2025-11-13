@@ -1,14 +1,25 @@
+---
+id: pillar-3-detail
+title: "Pillar 3: Model Orchestration (Detail)"
+models: [opus, sonnet]
+summary: false
+readTime: 20m
+---
+
 <!-- model: opus, sonnet -->
+> **Path:** Home › Three Pillars › Pillar 3 › Detail
+> **Validation:** Reviewed by Sonnet ✓
+
 # Pillar 3: Model Orchestration (Full Context)
 
 ## The Three-Model Paradigm
 
-Modern LLM pricing creates opportunity for optimization:
+Modern LLM pricing creates opportunity for optimization (see [Pricing](../../appendix/pricing)):
 
 ```
-Claude Opus 4:      $15 / 1M input tokens
-Claude Sonnet 4.5:  $3  / 1M input tokens
-Claude Haiku 4.5:   $0.80 / 1M input tokens
+Claude Opus 4.1:   $15/M input, $75/M output
+Claude Sonnet 4.5: $3/M input,  $15/M output
+Claude Haiku 4.5:  $1/M input,  $5/M output
 ```
 
 **Not all work is worth Opus-level cost.**
@@ -281,13 +292,13 @@ Total: 4000 tokens × $15/M = $0.06
 
 ```
 1. Opus generates architecture    → 200 tokens × $15/M = $0.003
-2. Haiku generates schema         → 1000 tokens × $0.80/M = $0.001
-3. Haiku generates queries        → 1000 tokens × $0.80/M = $0.001
-4. Haiku generates errors         → 1000 tokens × $0.80/M = $0.001
+2. Haiku generates schema         → 1000 tokens × $5/M  = $0.005
+3. Haiku generates queries        → 1000 tokens × $5/M  = $0.005
+4. Haiku generates errors         → 1000 tokens × $5/M  = $0.005
 5. Sonnet validates all           → 500 tokens × $3/M = $0.0015
 
 Total: ~$0.0075
-Cost reduction: 87.5% (!)
+Cost reduction: ≈81% (see [Pricing](../../appendix/pricing))
 ```
 
 ### Why the Reduction Works
@@ -310,32 +321,9 @@ Cost reduction: 87.5% (!)
 
 **User needs to see: Who generated what?**
 
-```
-Left pane (Strategy):
-┌──────────────────────┐
-│ <!-- model: opus --> │ ← User sees this
-│                      │
-│ # REST API Design    │
-│                      │
-│ Three core layers... │
-└──────────────────────┘
-
-Center pane (Examples):
-┌──────────────────────┐
-│ <!-- model: haiku --> │ ← "Illustrated by Haiku"
-│                      │
-│ Schema Example       │
-│ [code block]         │
-└──────────────────────┘
-
-Right pane (Review):
-┌──────────────────────┐
-│ <!-- model: sonnet -->│ ← "Reviewed by Sonnet"
-│                      │
-│ ✓ Schema solid      │
-│ ⚠ Error handling... │
-└──────────────────────┘
-```
+- **Left pane (Strategy):** Shows `<!-- model: opus -->`, title, and essence so users know the thinking source.  
+- **Center pane (Examples):** Displays Haiku attribution and the working code or diagram for each component.  
+- **Right pane (Review):** Shows Sonnet attribution, validation status (✓ / ⚠ / ✗), and next steps.  
 
 **Benefits:**
 - Transparency (users learn which model to trust for what)
@@ -343,5 +331,7 @@ Right pane (Review):
 - Accountability (clear attribution)
 
 ---
-
-**See also:** [Token Economics Deep Dive](../architecture/token-economics) | [Implementation Patterns](../implementation/model-metadata) | **Back:** [Home](../../home)
+**Related**
+- [Next: Token Economics](../architecture/token-economics)
+- [See also: Implementation Patterns](../implementation/model-metadata)
+- [Back: Home](../../home)

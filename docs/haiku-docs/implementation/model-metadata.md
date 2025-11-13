@@ -1,4 +1,15 @@
+---
+id: implementation-model-metadata
+title: "Model Metadata"
+models: [sonnet]
+summary: true
+readTime: 4m
+---
+
 <!-- model: sonnet -->
+> **Path:** Home › Implementation › Model Metadata
+> **Validation:** Reviewed by Sonnet ✓
+
 # Model Metadata
 
 ## What Gets Tracked
@@ -32,15 +43,15 @@ modelMetadata: {
 
 ## Display to User
 
-Show at bottom of document:
+Show at bottom of document (rates reference [Pricing](../appendix/pricing)):
 
 ```
 Created by:
-• Opus (strategic thinking) - $0.003
-• Haiku (examples) - $0.001  
-• Sonnet (validation) - $0.0015
+• Opus (strategy)  - ≈$0.0030
+• Haiku (examples) - ≈$0.0150
+• Sonnet (review)  - ≈$0.0075
 
-Total cost: $0.0075
+Total cost: ≈$0.0255
 ```
 
 ## Why Track This
@@ -53,19 +64,23 @@ Total cost: $0.0075
 ## Cost Calculation
 
 ```javascript
-const calculateCost = (metadata) => {
-  const OPUS = 15 / 1_000_000;
-  const HAIKU = 0.80 / 1_000_000;
-  const SONNET = 3 / 1_000_000;
-  
-  return {
-    opus: (metadata.opus?.tokens || 0) * OPUS,
-    haiku: (metadata.haiku?.tokens || 0) * HAIKU,
-    sonnet: (metadata.sonnet?.tokens || 0) * SONNET
-  };
+const PRICING = {
+  input: { opus: 15 / 1_000_000, haiku: 1 / 1_000_000, sonnet: 3 / 1_000_000 },
+  output: { opus: 75 / 1_000_000, haiku: 5 / 1_000_000, sonnet: 15 / 1_000_000 },
 };
+
+const dollars = (tokens, rate) => tokens * rate;
+
+const calculateCost = (metadata) => ({
+  opus: dollars(metadata.opus?.tokens || 0, PRICING.input.opus),
+  haiku: (metadata.haiku?.tokens || 0) * PRICING.output.haiku,
+  sonnet: dollars(metadata.sonnet?.tokens || 0, PRICING.output.sonnet),
+});
 ```
 
 ---
 
-**Reference:** [Data Model](../architecture/data-model.md) | **Next:** [Prompt Patterns](prompt-patterns.md)
+**Related**
+- [Next: Prompt Patterns](prompt-patterns)
+- [See also: Data Model](../architecture/data-model)
+- [Back: Implementation Overview](extending-current-system)

@@ -1,4 +1,15 @@
+---
+id: architecture-viewport-semantics
+title: "Architecture: Viewport Semantics"
+models: [haiku]
+summary: true
+readTime: 5m
+---
+
 <!-- model: haiku -->
+> **Path:** Home › Architecture › Viewport
+> **Validation:** Reviewed by Sonnet ✓
+
 # Architecture: Viewport Semantics
 
 ## The 3-Pane Layout
@@ -62,26 +73,27 @@ Fixed on desktop, collapsible on mobile
 
 ### Desktop (1200px+)
 ```
-┌─────────┬─────────┬─────────┐
-│    L    │    C    │    R    │ All 3 panes visible
-└─────────┴─────────┴─────────┘
+┌────┬────┬────┐
+│ L  │ C  │ R  │
+└────┴────┴────┘
 ```
+All three panes visible.
 
 ### Tablet (800px)
 ```
-┌─────────┬─────────┐
-│    C    │    R    │ Center + Right
-└─────────┴─────────┘
-Left pane: drawer/hamburger
+┌────┬────┐
+│ C  │ R  │
+└────┴────┘
 ```
+Left pane collapses into a drawer.
 
 ### Mobile (400px)
 ```
-┌─────────┐
-│    C    │ Center only
-└─────────┘
-Left: hamburger, Right: slide-out
+┌────┐
+│ C  │
+└────┘
 ```
+Left pane becomes hamburger; right pane slides over content when opened.
 
 ## Interaction Patterns
 
@@ -118,5 +130,7 @@ Right pane: Scrolls (independent)
 ```
 
 ---
-
-**Related:** [Information Flow](information-flow.md) | [Data Model](../architecture/data-model.md)
+**Related**
+- [Next: Information Flow](information-flow)
+- [See also: Data Model](data-model)
+- [Back: Token Economics](token-economics)

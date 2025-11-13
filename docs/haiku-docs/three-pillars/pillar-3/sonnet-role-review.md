@@ -1,4 +1,15 @@
+---
+id: pillar-3-sonnet-role
+title: "Sonnet Role: The Review Layer"
+models: [sonnet]
+summary: true
+readTime: 4m
+---
+
 <!-- model: sonnet -->
+> **Path:** Home › Three Pillars › Pillar 3 › Sonnet
+> **Validation:** Reviewed by Sonnet ✓
+
 # Sonnet Role: The Review Layer
 
 ## What Sonnet Does
@@ -40,7 +51,7 @@ Sonnet is the **review and validation layer**. Its job: verify outputs and find 
 
 ## Cost
 
-~$0.0015 (500 tokens at $3/M)
+≈$0.0075 (500 tokens at the Sonnet output rate; see [Pricing](../../appendix/pricing))
 
 ## Token Usage
 
@@ -82,5 +93,7 @@ User sees in 3 panes:
 - Right: Sonnet validation
 
 ---
-
-**Related:** [Opus Role](opus-role-essence.md) | [Haiku Role](haiku-role-illustration.md) | [Model Orchestration](pillar-3-model-orchestration.md)
+**Related**
+- [Next: Model Orchestration](pillar-3-model-orchestration)
+- [See also: Haiku Role](haiku-role-illustration)
+- [Back: Opus Role](opus-role-essence)

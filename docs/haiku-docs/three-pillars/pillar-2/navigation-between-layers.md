@@ -8,6 +8,7 @@ readTime: 5m
 
 <!-- model: haiku -->
 > **Path:** Home › Pillars › Pillar 2 › Navigation
+> **Validation:** Reviewed by Sonnet ✓
 
 # Navigating Between Layers
 
@@ -114,5 +115,7 @@ Back button → /docs/architecture?layer=summary
 ```
 
 ---
-
-**Related:** [Human Layer](human-layer) | [AI Layer](ai-layer) | [Viewport Semantics](../../architecture/viewport-semantics)
+**Related**
+- [Next: Pillar 3 Summary](../pillar-3/pillar-3-model-orchestration)
+- [See also: Human Layer](human-layer)
+- [Back: Pillar 2 Detail](pillar-2-detail)
