@@ -1,4 +1,5 @@
 export default function CompleteMarkdownRenderer() {
+  // Sample content exercising the supported subset for V1
   const content = `# Main Header
 
 This is regular text with **bold** and *italic* and ***bold italic***.
@@ -7,15 +8,13 @@ This is regular text with **bold** and *italic* and ***bold italic***.
 
 You can have inline code like \`const x = 5\` in your text.
 
-Also ~~strikethrough~~ works here.
+This renderer intentionally excludes strikethrough, images, block quotes, and numbered lists in V1.
 
 ### Third Level Header
 
 And you can have links like this link in your text.
 
-#### Fourth Level Header
-
-Images show as [Image: diagram.png].
+### Third-Level Only (No H4+)
 
 ## Code Blocks
 
@@ -34,21 +33,13 @@ Bullet list:
 - Second item
 - Third item
 
-Numbered list:
-1. First
-2. Second
-3. Third
-
-## Blockquotes
-
-> This is a blockquote with **bold** and *italic* inside it
-> Second line of quote
+Numbered lists and block quotes are not rendered specially in V1.
 
 ## Mixed Content
 
-A paragraph with **bold**, *italic*, \`code\`, and a link here.
+A paragraph with **bold**, *italic*, \`code\`, and a link [Go Home](ADR-009 Home Position Navigation) shown as blue underlined text.
 
-Another paragraph with ~~strikethrough~~ text.
+Another paragraph noting exclusions.
 
 > Quote with **emphasis**
 `;
@@ -69,6 +60,9 @@ Another paragraph with ~~strikethrough~~ text.
   );
 }
 
+// V1 subset: headers (#, ##, ###), bold (**), inline code (`), bullet lists (- item),
+// fenced code blocks (```), and links displayed as blue underlined text
+// (not clickable in V1; navigation wiring comes in a later step).
 function MarkdownRenderer({ content }) {
   const lines = content.split('\n');
   const elements = [];
@@ -84,7 +78,7 @@ function MarkdownRenderer({ content }) {
       continue;
     }
 
-    // Headers
+    // Headers (H1–H3 only)
     if (line.startsWith('# ') && !line.startsWith('## ')) {
       elements.push(
         <div key={i} style={getHeaderStyle(1)}>
@@ -103,13 +97,6 @@ function MarkdownRenderer({ content }) {
       elements.push(
         <div key={i} style={getHeaderStyle(3)}>
           {renderInline(line.substring(4))}
-        </div>
-      );
-      i++;
-    } else if (line.startsWith('#### ')) {
-      elements.push(
-        <div key={i} style={getHeaderStyle(4)}>
-          {renderInline(line.substring(5))}
         </div>
       );
       i++;
@@ -136,28 +123,7 @@ function MarkdownRenderer({ content }) {
       );
       i++;
     }
-    // Blockquote
-    else if (line.startsWith('> ')) {
-      const quoteLines = [];
-      while (i < lines.length && lines[i].startsWith('> ')) {
-        quoteLines.push(lines[i].substring(2));
-        i++;
-      }
-      elements.push(
-        <div key={i} style={{
-          paddingLeft: '12px',
-          color: '#999999',
-          margin: '12px 0',
-          borderLeft: '2px solid #999999'
-        }}>
-          {quoteLines.map((ql, idx) => (
-            <div key={idx}>
-              {renderInline(ql)}
-            </div>
-          ))}
-        </div>
-      );
-    }
+    // Block quotes excluded in V1 (fall through to paragraph)
     // Bullet list
     else if (line.startsWith('- ')) {
       const listItems = [];
@@ -175,26 +141,7 @@ function MarkdownRenderer({ content }) {
         </div>
       );
     }
-    // Numbered list
-    else if (/^\d+\. /.test(line)) {
-      const listItems = [];
-      let num = 1;
-      while (i < lines.length && /^\d+\. /.test(lines[i])) {
-        const match = lines[i].match(/^\d+\. (.*)$/);
-        listItems.push(match ? match[1] : '');
-        i++;
-        num++;
-      }
-      elements.push(
-        <div key={i} style={{ margin: '12px 0' }}>
-          {listItems.map((item, idx) => (
-            <div key={idx} style={{ paddingLeft: '20px', color: '#808080' }}>
-              {idx + 1}. {renderInline(item)}
-            </div>
-          ))}
-        </div>
-      );
-    }
+    // Numbered lists excluded in V1 (fall through to paragraph)
     // Regular paragraph
     else {
       elements.push(
@@ -210,7 +157,7 @@ function MarkdownRenderer({ content }) {
 }
 
 function getHeaderStyle(level) {
-  const colors = ['#000000', '#333333', '#666666', '#999999'];
+  const colors = ['#000000', '#333333', '#666666'];
   return {
     color: colors[level - 1],
     fontWeight: 'bold',
@@ -222,9 +169,9 @@ function renderInline(text) {
   const parts = [];
   let lastIndex = 0;
 
-  // Pattern: **bold**, *italic*, `code`, ~~strikethrough~~, [Image: name]
-  // Links now just show text: [text](url) → text (blue)
-  const combinedRegex = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|~~(.+?)~~|\[([^\]]+)\]\(([^\)]+)\)|\[Image: ([^\]]+)\]/g;
+  // Pattern: **bold**, *italic*, `code`, [text](target)
+  // Excludes: strikethrough, images (V1)
+  const combinedRegex = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[([^\]]+)\]\(([^\)]+)\)/g;
   let match;
 
   while ((match = combinedRegex.exec(text)) !== null) {
@@ -257,27 +204,11 @@ function renderInline(text) {
         </span>
       );
     }
-    // Strikethrough
+    // Link - SHOW ONLY TEXT (blue, underlined)
     else if (match[4]) {
       parts.push(
-        <span key={`s-${match.index}`} style={{ textDecoration: 'line-through' }}>
-          {match[4]}
-        </span>
-      );
-    }
-    // Link - SHOW ONLY TEXT (blue, underlined)
-    else if (match[5]) {
-      parts.push(
         <span key={`l-${match.index}`} style={{ color: '#1a73e8', textDecoration: 'underline' }}>
-          {match[5]}
-        </span>
-      );
-    }
-    // Image
-    else if (match[7]) {
-      parts.push(
-        <span key={`img-${match.index}`} style={{ color: '#999999' }}>
-          [Image: {match[7]}]
+          {match[4]}
         </span>
       );
     }
