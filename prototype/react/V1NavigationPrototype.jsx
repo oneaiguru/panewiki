@@ -14,7 +14,11 @@ export default function V1NavigationPrototype() {
     if (!DOCS[targetId]) {
       return;
     }
-    setHistory((prev) => [...prev, targetId]);
+    setHistory((prev) => {
+      // `prev.length` is the index where the new doc will reside after append.
+      // We do not need a separate setCurrentIndex because history itself is our source of truth.
+      return [...prev, targetId];
+    });
   };
 
   const handleBack = () => {

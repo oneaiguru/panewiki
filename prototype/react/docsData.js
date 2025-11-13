@@ -1013,4 +1013,4 @@ See: [ExecutionPlan](ExecutionPlan)
 };
 
 export const DOC_IDS = Object.keys(DOCS);
-export const START_DOC_ID = "MasterIssueChecklist";
+export const START_DOC_ID = "ExecutionPlan";

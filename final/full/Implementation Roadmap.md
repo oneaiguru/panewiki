@@ -7,7 +7,7 @@ src/
 ├── App.jsx                    (Main app component, state management)
 ├── App.css                    (Global styles)
 ├── data/
-│   └── mockDiagrams.js       (DIAGRAMS_DATA - all 16 documents)
+│   └── docsData.js          (auto-generated from final/summaries via scripts/generateDocsData.js)
 ├── components/
 │   ├── NavigationBar.jsx      (Top navigation bar)
 │   ├── NavigationBar.css
@@ -114,7 +114,7 @@ App
 **Goal**: Get state management and scroll working
 
 **Files to Create**:
-1. `data/mockDiagrams.js` - All 16 documents as markdown
+1. `data/docsData.js` (generated) - All documentation nodes as markdown strings
 2. `utils/scrollCalculations.js` - Utility functions for scroll formulas
 3. `App.jsx` - State, handlers, derived values
 4. `App.css` - Basic layout (flexbox for containers)
@@ -131,7 +131,7 @@ App
 - Verify scrollLeft matches formula
 
 **Checklist**:
-- [ ] Create data/mockDiagrams.js with 16 documents
+- [ ] Generate data/docsData.js (run `node scripts/generateDocsData.js`)
 - [ ] Create utils/scrollCalculations.js with helper functions:
   - [ ] calculateScrollLeft(currentIndex)
   - [ ] getVisiblePanes(history, currentIndex)
@@ -242,7 +242,7 @@ App
 1. `App.jsx` - Add useEffect for keyboard events
 2. `ScrollContainer.jsx` - Add smooth scroll animation
 3. `App.css` - Add animations, transitions
-4. Install markdown renderer (marked.js via CDN)
+4. Wire the ADR-008 renderer (custom JSX-based markdown renderer)
 
 **What Works After Phase 4**:
 - Arrow keys work (← for back, → for forward to first link)
@@ -261,9 +261,10 @@ App
 - Links are styled and clickable
 
 **Checklist**:
-- [ ] Add markdown renderer (marked.js):
-  - [ ] Import from CDN or npm
-  - [ ] Create markdown renderer component
+- [ ] Add markdown renderer (ADR-008 implementation):
+  - [ ] Import the shared renderer component (CompleteMarkdownRenderer)
+  - [ ] Pass pane markdown + `onClickLink`
+  - [ ] Ensure links call navigation callbacks (no DOM innerHTML)
 - [ ] Add useEffect in App.jsx for keyboard events:
   - [ ] ArrowLeft → handleBack()
   - [ ] ArrowRight → handleForward() (to first link)
@@ -317,14 +318,14 @@ export function getDepthDisplay(currentIndex, historyLength) {
 
 ```javascript
 import { useState } from 'react';
-import { DIAGRAMS_DATA } from '../data/mockDiagrams';
+import { DOCS, START_DOC_ID } from '../data/docsData';
 
 export function useNavigation() {
-  const [history, setHistory] = useState([DIAGRAMS_DATA['issues']]);
+  const [history, setHistory] = useState([DOCS[START_DOC_ID]]);
   const [currentIndex, setCurrentIndex] = useState(0);
   
   const handleClickLink = (targetDocId) => {
-    const targetDoc = DIAGRAMS_DATA[targetDocId];
+    const targetDoc = DOCS[targetDocId];
     setHistory(prev => [...prev, targetDoc]);
     setCurrentIndex(history.length);
   };
@@ -356,29 +357,37 @@ export function useNavigation() {
 
 ---
 
-## Data Structure: 16 Documents
+## Data Source: Planning Documents (17 Nodes)
+
+- Canonical markdown lives under `final/summaries/` (currently 17 files).
+- `scripts/generateDocsData.js` extracts:
+  - `id` (filename without extension)
+  - `title` (first `#` heading)
+  - `links` (all `[text](target)` references that are local IDs)
+  - `content` (raw markdown, escaped for template literals)
+- Output file: `prototype/react/docsData.js` (or `src/data/docsData.js` in the production app).
+
+Example entry in `docsData.js`:
 
 ```javascript
-const DIAGRAMS_DATA = {
-  'issues': {
-    id: 'issues',
-    title: 'Master Issue Checklist',
-    section: 'planning',
-    content: `# Master Issue Checklist\n\n... markdown content ...`,
-    links: ['status', 'plan']
-  },
-  
-  'status': {
-    id: 'status',
-    title: 'Sections Status Tracker',
-    section: 'planning',
-    content: `# Sections Status Tracker\n\n... markdown content ...`,
-    links: ['issues', 'plan']
-  },
-  
-  // ... all 16 documents with markdown content and links
+"ExecutionPlan": {
+  id: "ExecutionPlan",
+  title: `Staged Writing Plan`,
+  filename: "ExecutionPlan.md",
+  links: ["DesignDecisionsLog", "MasterIssueChecklist"],
+  content: `# Staged Writing Plan\n\n...`
 }
 ```
+
+Home node alignment:
+- ADR-009 designates **ExecutionPlan** as the home/entry document.
+- The generator prefers `ExecutionPlan` as `START_DOC_ID`; if it is missing, it falls back to `MasterIssueChecklist`.
+
+Keep the markdown set and the generated data in sync by re-running the script whenever the summaries change.
+
+**Link integrity**
+- Before regenerating, run the link checker described in `docs/LinkIntegrity.md` to ensure all `[text](target)` references resolve to actual documents.
+- The React prototype assumes data is link-safe; broken targets are caught by the script, not at runtime.
 
 ---
 
@@ -486,4 +495,3 @@ After all 4 phases:
 ---
 
 **Status**: Ready for Phase 1 implementation once Step 1 (page format) is approved
-
