@@ -28,9 +28,9 @@ Mapping
 
 - Summary: `ADR003FixedThreePaneViewport.md`
   - Full: `ADR-003 Fixed Three Pane Viewport.md`
-  - Present?: No
-  - Rename needed?: N/A
-  - Link updates?: Yes
+  - Present?: Yes
+  - Rename needed?: Done (spaced naming)
+  - Link updates?: Pending when cross-ADR links are added to full set
 
 - Summary: `ADR004ComputedScrollPosition.md`
   - Full: `ADR-004 Computed Scroll Position.md`
