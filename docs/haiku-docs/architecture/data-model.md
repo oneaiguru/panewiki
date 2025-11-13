@@ -10,6 +10,21 @@ Nodes represent "a piece of content" that can be displayed in the 3-pane interfa
 ## Node Structure (TypeScript)
 
 ```typescript
+// Reusable type alias for ISO8601 date strings
+type ISO8601 = string;
+
+// Base metadata shared across all model runs
+interface ModelMetadataBase {
+  prompt: string;
+  tokens: number;
+  timestamp: ISO8601;
+}
+
+// Metadata for individual Haiku runs (supports parallelization)
+interface HaikuRunMetadata extends ModelMetadataBase {
+  parallelIndex?: number;    // Index when running parallel calls
+}
+
 interface NavigableNode {
   // Identity
   id: string;                    // kebab-case: "auth-flow"
@@ -19,48 +34,35 @@ interface NavigableNode {
   summary: {
     content: string;             // ~30 lines, human-optimized
     lineCount: number;           // For UI hints
-    estimatedReadTime: number;   // In seconds
+    estimatedReadSeconds: number;   // Read time in seconds
   };
-  
-  detail: {
+
+  detail?: {                     // Optional - not all nodes need detail
     content: string;             // ~100 lines, full context
     lineCount: number;
-    estimatedReadTime: number;   // In minutes
+    estimatedReadSeconds: number;   // Read time in seconds
   };
   
   // Model Attribution
   modelSource: 'opus' | 'haiku' | 'sonnet' | 'combined';
   modelMetadata: {
-    opus?: {
-      prompt: string;
-      tokens: number;
-      timestamp: ISO8601;
-    };
-    haiku?: {
-      prompt: string;
-      tokens: number;
-      parallelIndex?: number;    // If parallel calls
-      timestamp: ISO8601;
-    };
-    sonnet?: {
-      prompt: string;
-      tokens: number;
-      timestamp: ISO8601;
-    };
+    opus?: ModelMetadataBase;
+    haikuRuns?: HaikuRunMetadata[];  // Array to support parallel calls
+    sonnet?: ModelMetadataBase;
   };
   
   // Navigation Context
   breadcrumb: string[];          // ["home", "architecture", "data-model"]
-  linkedFrom: string[];          // Nodes that link to this one
+  linkedFrom: string[];          // BUILD-TIME: Computed from graph, not persisted
   linkedTo: string[];            // Nodes this links to
   linkedDetailOnly: string[];    // Links only visible in detail view
-  
+
   // Content Classification
   category: 'concept' | 'guide' | 'reference' | 'use-case';
   tags: string[];                // ["architecture", "data", "structure"]
-  
-  // Capabilities
-  hasDetailLayer: boolean;       // Can user click "See details"?
+
+  // Capabilities (UI Helpers - computed at build time)
+  hasDetailLayer: boolean;       // BUILD-TIME: Derived from (detail !== undefined)
   requiresValidation: boolean;   // Does this need Sonnet review?
   canParallelize: number;        // How many parallel Haiku calls? (0 = none)
   
@@ -132,20 +134,19 @@ Result: Users learn optimal AI patterns
 const homeNode = {
   id: "home",
   title: "Home",
-  
+
   summary: {
     content: "<!-- model: opus -->\n# Welcome\n\n...",
     lineCount: 30,
-    estimatedReadTime: 5
+    estimatedReadSeconds: 300  // ~5 minutes
   },
-  
-  detail: null,  // No detail needed
-  hasDetailLayer: false,
+
+  // No detail layer - detail is optional
   canParallelize: 0,
-  
+
   linkedTo: ["vision", "three-pillars"],
   category: "concept",
-  
+
   modelSource: "opus",
   modelMetadata: {
     opus: {
@@ -165,29 +166,29 @@ homeNode.cost = calculateNodeCost(homeNode);
 const tokenEconomicsNode = {
   id: "token-economics",
   title: "Token Economics: The Math",
-  
+
   summary: {
     content: "<!-- model: sonnet -->\n# Token Economics\n\n...",
     lineCount: 35,
-    estimatedReadTime: 5
+    estimatedReadSeconds: 300  // ~5 minutes
   },
-  
+
   detail: {
     content: "<!-- model: sonnet -->\n# Token Economics (Full)\n\n...",
     lineCount: 187,
-    estimatedReadTime: 15
+    estimatedReadSeconds: 900  // ~15 minutes
   },
-  
-  hasDetailLayer: true,  // User can click "See details"
+
+  // hasDetailLayer computed from detail !== undefined
   canParallelize: 0,
-  
+
   linkedTo: ["pillar-3", "implementation"],
   linkedDetailOnly: ["jwt-math-proofs"],
-  linkedFrom: ["home", "architecture"],
-  
+  linkedFrom: ["home", "architecture"],  // Computed at build time from graph
+
   category: "reference",
   tags: ["cost", "efficiency", "economics"],
-  
+
   modelSource: "sonnet",
   modelMetadata: {
     sonnet: {
@@ -207,50 +208,55 @@ tokenEconomicsNode.cost = calculateNodeCost(tokenEconomicsNode);
 const authImplementationNode = {
   id: "auth-implementation",
   title: "Authentication Implementation",
-  
+
   summary: {
     content: "<!-- model: opus -->\n# Auth: Strategic Layer\n\n...",
     lineCount: 30,
-    estimatedReadTime: 5
+    estimatedReadSeconds: 300  // ~5 minutes
   },
-  
+
   detail: {
     content: "<!-- model: opus, haiku, sonnet -->\n# Auth (Complete)\n\n...",
     lineCount: 250,
-    estimatedReadTime: 20
+    estimatedReadSeconds: 1200  // ~20 minutes
   },
-  
-  hasDetailLayer: true,
+
   canParallelize: 3,  // 3 parallel Haiku calls for examples
   requiresValidation: true,  // Sonnet reviews examples
-  
+
   modelMetadata: {
     opus: {
       prompt: "Design auth architecture",
       tokens: 200,
       timestamp: "2025-11-13T05:00:00Z"
     },
-    haiku: {
-      prompt: "Example for component 1",
-      tokens: 1000,
-      parallelIndex: 0
-    },
-    haiku: {
-      prompt: "Example for component 2",
-      tokens: 1000,
-      parallelIndex: 1
-    },
-    haiku: {
-      prompt: "Example for component 3",
-      tokens: 1000,
-      parallelIndex: 2
-    },
+    haikuRuns: [
+      {
+        prompt: "Example for component 1",
+        tokens: 1000,
+        timestamp: "2025-11-13T05:01:00Z",
+        parallelIndex: 0
+      },
+      {
+        prompt: "Example for component 2",
+        tokens: 1000,
+        timestamp: "2025-11-13T05:01:00Z",
+        parallelIndex: 1
+      },
+      {
+        prompt: "Example for component 3",
+        tokens: 1000,
+        timestamp: "2025-11-13T05:01:00Z",
+        parallelIndex: 2
+      }
+    ],
     sonnet: {
       prompt: "Validate all examples",
-      tokens: 500
+      tokens: 500,
+      timestamp: "2025-11-13T05:02:00Z"
     }
   },
-  
+
   modelSource: "combined"
 } as NavigableNode;
 
@@ -268,9 +274,10 @@ nodeA.linkedTo = [..., "node-b"]
 // Then node-b MUST know:
 nodeB.linkedFrom = [..., "node-a"]
 
-// This is automatic in the system:
-// When user adds link A → B,
-// System updates B.linkedFrom automatically
+// This is computed at BUILD TIME:
+// The build process scans all nodes' linkedTo arrays
+// and automatically populates linkedFrom for each target node.
+// linkedFrom is NOT persisted - it's derived from the graph.
 ```
 
 ### Rule 2: Circular Links are OK
@@ -331,8 +338,8 @@ type NodeCost = {
 };
 
 export function calculateNodeCost(node: NavigableNode): NodeCost {
-  const opusT   = node.modelMetadata.opus?.tokens   ?? 0;
-  const haikuT  = (node.modelMetadata.haiku?.tokens ?? 0) * (node.canParallelize ?? 1);
+  const opusT   = node.modelMetadata.opus?.tokens ?? 0;
+  const haikuT  = node.modelMetadata.haikuRuns?.reduce((sum, run) => sum + run.tokens, 0) ?? 0;
   const sonnetT = node.modelMetadata.sonnet?.tokens ?? 0;
 
   const opusUSD   = opusT   * PRICING.OPUS_PER_TOKEN_USD;
